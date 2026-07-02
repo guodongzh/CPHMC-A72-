@@ -1,0 +1,16 @@
+*.hs_fs
+*.bin
+*.o
+*.obj
+*.tiimage
+*.exe
+Debug/
+Release/
+obj_lib/
+.settings/
+.idea/
+.jxbrowser.userdata/
+.metadata/
+.svn
+cmake-build-debug/
+app_version.h
