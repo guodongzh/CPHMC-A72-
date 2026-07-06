@@ -566,14 +566,19 @@ int32_t SBL_OSPIBootImage(sblEntryPoint_t *pEntry)
     /* Initialization of the driver. */
     SBL_OSPI_Initialize();
 
-#if defined(SBL_ENABLE_HLOS_BOOT) && (defined(SOC_J721E) || defined(SOC_J7200) || defined(SOC_J721S2) || defined(SOC_J784S4))
-    retVal = SBL_MulticoreImageParse((void *)&offset, SBL_OSPI_OFFSET_SI, pEntry, SBL_SKIP_BOOT_AFTER_COPY);
-#else
+
     /* Profile point after OSPI init and before phy tuning */
     SBL_ADD_PROFILE_POINT;
-    retVal = SBL_MulticoreImageParse((void *)&offset, SBL_OSPI_OFFSET_SI, pEntry, SBL_BOOT_AFTER_COPY);
-#endif
+    retVal = SBL_MulticoreImageParse((void *)&offset, SBL_OSPI_OFFSET_SI, pEntry, SBL_SKIP_BOOT_AFTER_COPY);
+    if(retVal != E_PASS)
+    {
+        goto out;
+    }
 
+//    offset = MCU1_0_OSPI_OFFSET;
+//    retVal = SBL_MulticoreImageParse((void *)&offset, MCU1_0_OSPI_OFFSET, pEntry, SBL_SKIP_BOOT_AFTER_COPY);
+
+out:
     SBL_ospiClose(&gBoardHandle);
 
     if (isXIPEnable == BTRUE)

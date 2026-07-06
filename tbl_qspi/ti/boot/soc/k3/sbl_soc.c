@@ -514,13 +514,34 @@ void J721E_SetLeoPmicVoltages(void *handle, sblCfgPmic_t *pmicVoltCfg)
 
 static void J721E_SetupLeoPmicAvs(uint32_t opp)
 {
-    I2C_Handle handle = NULL;
 #if 0
-    handle = Board_getI2CHandle(BOARD_SOC_DOMAIN_WKUP, BOARD_I2C_PMIC_INSTANCE);
-    if (handle == NULL)
+    I2C_Handle handle = NULL;
+
+    I2C_Params params;
+    I2C_Params_init(&params);
+    I2C_HwAttrs i2c_cfg;
+
+    /* Get the default I2C init configurations*/
+    I2C_socGetInitCfg(BOARD_I2C_PMIC_INSTANCE, &i2c_cfg);
+
+    /* Modify the default I2C configurations if necessary
+     * WKUP I2C0
+     * */
+    i2c_cfg.baseAddr = CSL_WKUP_I2C0_CFG_BASE;
+
+    /* Set the default I2C init configurations */
+    I2C_socSetInitCfg(BOARD_I2C_PMIC_INSTANCE, &i2c_cfg);
+
+    SBL_log(SBL_LOG_NONE, "I2C Test: Using Instance %d\n", BOARD_I2C_PMIC_INSTANCE);
+
+    params.bitRate = I2C_400kHz;
+    params.transferMode = I2C_MODE_BLOCKING;
+    params.lockNumber = 0;
+    handle = I2C_open(BOARD_I2C_PMIC_INSTANCE, &params);
+    if (NULL == handle)
     {
         SBL_log(SBL_LOG_ERR, "I2C Open Failed\n\r");
-        SblErrLoop(__FILE__, __LINE__);
+        I2C_close(handle);
     }
     SBL_SetupPmicCfg(pmicAvsVoltCfg, opp);
     J721E_SetLeoPmicVoltages(handle, pmicAvsVoltCfg);

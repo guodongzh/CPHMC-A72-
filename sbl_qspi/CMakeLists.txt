@@ -24,11 +24,13 @@ file(GLOB LINKER_SCRIPT ${CMAKE_CURRENT_LIST_DIR}/*.cmd)
 include(./cmake/linker-flag.cmake)
 add_link_options(-Wl,-m${PROJECT_BINARY_DIR}/${PROJECT_NAME}.map -Wl,${LINKER_SCRIPT})
 
+set(CORE_TYPE R5F)
+include(../../CPHMC_1A/CPHMC_1A.cmake)
 
 # add include path for source code
 include_directories(inc)
 include_directories(.)
-
+include_directories(../../CPHMC_1A/common)
 header_directories(src)
 header_directories(soc)
 
@@ -42,7 +44,7 @@ add_compile_definitions(SOC_J721E BUILD_MCU j721e_evm BUILD_MCU1_0 SBL_LOG_LEVEL
 
 #search source code files
 file(GLOB_RECURSE SOURCES "src/*.c" "src/*.h" "inc/*.h" "soc/*.c" "soc/*.asm" "soc/*h"
-    "ti/*.c" "ti/*.h" "ti/*.asm" "board/*.c" "board/*.h"
+        "../../CPHMC_1A/empty_CPHMC_1A.c" "ti/*.c" "ti/*.h"
 )
 add_executable(${PROJECT_NAME} ${SOURCES}  ${LINKER_SCRIPT})
 
