@@ -119,12 +119,12 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
+						<entry excluding="CPHMC_1A/common/memory_map_ddr.cmd|CPHMC_1A/common/linker.cmd|CPHMC_1A/common/ti/drv/sciclient|cmake-build-debug" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="cmake-build-debug/.cmake"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="cmake-build-debug/CMakeFiles/3.27.8"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="cmake-build-debug/CMakeFiles/4.1.2"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="cmake-build-debug/CMakeFiles/sbl_ospi.dir"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="cmake-build-debug/CMakeFiles/sbl_ospi.out.dir"/>
-						<entry excluding="ti/drv/sciclient|CPHMC_1A/common/memory_map_ddr.cmd|CPHMC_1A/common/linker.cmd|CPHMC_1A/common/ti/drv/sciclient|cmake-build-debug" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -245,12 +245,12 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
+						<entry excluding="CPHMC_1A/common/memory_map_ddr.cmd|CPHMC_1A/common/linker.cmd|CPHMC_1A/common/ti/drv/sciclient|cmake-build-debug" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="cmake-build-debug/.cmake"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="cmake-build-debug/CMakeFiles/3.27.8"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="cmake-build-debug/CMakeFiles/4.1.2"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="cmake-build-debug/CMakeFiles/sbl_ospi.dir"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="cmake-build-debug/CMakeFiles/sbl_ospi.out.dir"/>
-						<entry excluding="ti/drv/sciclient|CPHMC_1A/common/memory_map_ddr.cmd|CPHMC_1A/common/linker.cmd|CPHMC_1A/common/ti/drv/sciclient|cmake-build-debug" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
