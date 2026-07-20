@@ -24,6 +24,9 @@ file(GLOB LINKER_SCRIPT ${CMAKE_CURRENT_LIST_DIR}/*.cmd)
 include(./cmake/linker-flag.cmake)
 add_link_options(-Wl,-m${PROJECT_BINARY_DIR}/${PROJECT_NAME}.map -Wl,${LINKER_SCRIPT})
 
+set(CORE_TYPE R5F)
+include(../../CPHMC_1A/CPHMC_1A.cmake)
+
 include_directories(.)
 include_directories(inc)
 
@@ -31,14 +34,16 @@ header_directories(src)
 header_directories(soc)
 
 include_directories(../../CPHMC_1A/common)
-include_directories(ti/csl/arch/r5)
-include_directories(ti/boot/sbl/soc/k3)
-include_directories(ti/freertos/include)
-include_directories(ti/freertos/portable/TI_CGT/r5f)
-include_directories(ti/freertos/config/j721e/r5f)
-include_directories(common/middleware/file_system/include)
-include_directories(common/middleware/ipc_common/include)
-include_directories(common/middleware/irig_b/include)
+include_directories(../../CPHMC_1A/common/ti/csl/arch/r5)
+include_directories(../../CPHMC_1A/common/ti/boot/sbl/soc/k3)
+include_directories(../../CPHMC_1A/common/ti/freertos/include)
+include_directories(../../CPHMC_1A/common/ti/freertos/portable/TI_CGT/r5f)
+include_directories(../../CPHMC_1A/common/ti/freertos/config/j721e/r5f)
+include_directories(../../CPHMC_1A/common/middleware/cfg_file_prase/include)
+include_directories(../../CPHMC_1A/common/middleware/file_system/include)
+include_directories(../../CPHMC_1A/common/middleware/ipc_common/include)
+include_directories(../../CPHMC_1A/common/middleware/irig_b/include)
+
 
 include_directories(../../CPHMC_1A/optional_lib/PSCode_lib_prog)
 include_directories(../../CPHMC_1A/optional_lib/PSCode_lib_prog/SmartPLC/platform/inc)
@@ -50,13 +55,15 @@ include_directories(../../CPHMC_1A/optional_lib/PSCode_lib_prog/PSCode/net_inter
 include_directories(../../CPHMC_1A/optional_lib/PSCode_lib_prog/PSCode/flash_interface)
 include_directories(../../CPHMC_1A/optional_lib/PSCode_lib_prog/PSCode/platform/tcp)
 
+header_directories(../../CPHMC_1A/common/bsp)
+
 add_compile_definitions(SOC_J721E j721e_evm BUILD_MCU BUILD_MCU1_0 BOOT_OSPI OSPI_ONLY SBL_LOG_LEVEL=3
         MPU1_HLOS_BOOT_ENABLED FREERTOS)
 
 
 file(GLOB_RECURSE SOURCES "src/*.c" "src/*.h" "inc/*.h" "soc/*.c" "soc/*.asm" "soc/*h" "ti/*c" "ti/*h" "ti/*.asm"
-                            "board/*.c" "board/*.h" "common/*.c" "common/*.h" "optional_lib/*.c" "optional_lib/*.h"
         "../../CPHMC_1A/empty_CPHMC_1A.c"
+        "../../CPHMC_1A/common/bsp/*.c"
         "../../CPHMC_1A/common/middleware/platform/src/*.c"
         "../../CPHMC_1A/common/middleware/net_protocol_prog/*.c"
         "../../CPHMC_1A/common/middleware/file_system/*.c"
@@ -74,7 +81,10 @@ file(GLOB_RECURSE SOURCES "src/*.c" "src/*.h" "inc/*.h" "soc/*.c" "soc/*.asm" "s
         "../../CPHMC_1A/optional_lib/Time_Sync_lib_prog/*.c"
         "../../CPHMC_1A/optional_lib/Time_Sync_lib_prog/*.h"
 )
-add_executable(${PROJECT_NAME} ${SOURCES}  ${LINKER_SCRIPT})
+
+
+
+add_executable(${PROJECT_NAME} ${SOURCES}  ${CORE_SRC} ${LINKER_SCRIPT})
 
 file(GLOB_RECURSE LIBS "lib/*.aer5f")
 target_link_libraries(${PROJECT_NAME} ${LIBS})

@@ -114,10 +114,4 @@
 			</matcher>
 		</filter>
 	</filteredResources>
-	<variableList>
-		<variable>
-			<name>TI_PDK_INSTALL_DIR</name>
-			<value>$%7BTI_PRODUCTS_DIR__TIREX%7D/ti_sdk_09/ti-processor-sdk-rtos-j721e-evm-09_02_00_05/pdk_jacinto_09_02_00_30</value>
-		</variable>
-	</variableList>
 </projectDescription>

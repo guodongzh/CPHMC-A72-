@@ -132,9 +132,6 @@
 		</cconfiguration>
 		<cconfiguration id="com.ti.ccstudio.buildDefinitions.TMS470.Debug.788943162.1866104275">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="com.ti.ccstudio.buildDefinitions.TMS470.Debug.788943162.1866104275" moduleId="org.eclipse.cdt.core.settings" name="Release">
-				<macros>
-					<stringMacro name="TI_PDK_INSTALL_DIR" type="VALUE_PATH_DIR" value="${TI_PRODUCTS_DIR__TIREX}/ti_sdk_09/ti-processor-sdk-rtos-j721e-evm-09_02_00_05/pdk_jacinto_09_02_00_30"/>
-				</macros>
 				<externalSettings/>
 				<extensions>
 					<extension id="com.ti.ccstudio.binaryparser.CoffParser" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -191,7 +188,7 @@
 									<listOptionValue builtIn="false" value="UART_DMA_ENABLE"/>
 									<listOptionValue builtIn="false" value="BOARD_DDR_ENABLE_DDR_MEM_PRIME"/>
 									<listOptionValue builtIn="false" value="SPI_DMA_ENABLE"/>
-									<listOptionValue builtIn="false" value="SBL_LOG_LEVEL=1"/>
+									<listOptionValue builtIn="false" value="SBL_LOG_LEVEL=3"/>
 									<listOptionValue builtIn="false" value="SBL_SCRATCH_MEM_START=0xC2000000"/>
 									<listOptionValue builtIn="false" value="SBL_SCRATCH_MEM_SIZE=0x4000000"/>
 									<listOptionValue builtIn="false" value="SBL_ENABLE_PLL"/>

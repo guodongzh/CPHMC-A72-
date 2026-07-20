@@ -12,6 +12,7 @@
 #include "my_board_init.h"
 #include "ecc_ddr.h"
 #include "app_version.h"
+#include "j721e_init.h"
 
 /**********************************************************************
  ************************** Global Variables **************************
@@ -204,6 +205,7 @@ int main()
         /* Use UART fclk freq setup by ROM */
         uart_cfg.baseAddr = CSL_WKUP_UART0_BASE;
         uart_cfg.frequency = SBL_SYSFW_UART_MODULE_INPUT_CLK;
+        uart_cfg.frequency = SBL_ROM_UART_MODULE_INPUT_CLK;
         /* Disable the UART interrupt */
         uart_cfg.enableInterrupt = FALSE;
         UART_socSetInitCfg(BOARD_UART_INSTANCE, &uart_cfg);
@@ -231,6 +233,12 @@ int main()
     *(unsigned int *)(RAT_BASE + 0x40 + (REGION_ID*0x10)) = 0x80000013;
     SBL_log(SBL_LOG_MAX, "done.\n");
 #endif
+
+    printf_("\n%s build at 20%d-%d-%d - %s, APP SVN VER = %d\n",
+            SBL_VERSION_STR, APP_BUILD_YEAR, APP_BUILD_MONTH, APP_BUILD_DAY,
+            __TIME__, APP_SVN_VERSION);
+
+    // j721e_early_init();
 
     /* Load SYSFW. */
     SBL_SciClientInit(devGroup);
