@@ -234,17 +234,13 @@ int main()
     SBL_log(SBL_LOG_MAX, "done.\n");
 #endif
 
-    printf_("\n%s build at 20%d-%d-%d - %s, APP SVN VER = %d\n",
-            SBL_VERSION_STR, APP_BUILD_YEAR, APP_BUILD_MONTH, APP_BUILD_DAY,
-            __TIME__, APP_SVN_VERSION);
-
     // j721e_early_init();
 
     /* Load SYSFW. */
     SBL_SciClientInit(devGroup);
-    printf_("\n%s build at 20%d-%d-%d - %s, APP SVN VER = %d\n",
+    printf_("\n%s build at 20%d-%d-%d - %s, APP VSC VER = 0x%08x\n",
             SBL_VERSION_STR, APP_BUILD_YEAR, APP_BUILD_MONTH, APP_BUILD_DAY,
-            __TIME__, APP_SVN_VERSION);
+            __TIME__, APP_VSC_VERSION);
 
 #if !defined(SBL_SKIP_PINMUX_ENABLE)
     /* Board pinmux. */
