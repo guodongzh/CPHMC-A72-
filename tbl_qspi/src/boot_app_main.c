@@ -92,12 +92,12 @@ int32_t main(void)
     UART_stdioInit2(BOARD_UART_INSTANCE, &params);
     putchar_ = UART_putc;
 
-    UART_printf("\nMCU R5F Boot App build at %d-%d-%d - %s, APP SVN VER = %d, started at %d usecs\n",
+    UART_printf("\nMCU R5F Boot App build at %d-%d-%d - %s, APP VSC VER = 0x%08x, started at %d usecs\n",
                 APP_BUILD_YEAR,
                 APP_BUILD_MONTH,
                 APP_BUILD_DAY,
                 __TIME__,
-                APP_SVN_VERSION,
+                APP_VSC_VERSION,
                 BootApp_GetTimeInMicroSec(CSL_armR5PmuReadCntr(CSL_ARM_R5_PMU_CYCLE_COUNTER_NUM)));
 
     ret = BootApp_SetupSciServer();
