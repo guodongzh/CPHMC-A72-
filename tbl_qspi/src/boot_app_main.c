@@ -40,7 +40,7 @@
 /*                          Function Declarations                             */
 /* ========================================================================== */
 static void BootApp_TaskFxn(void *a0, void *a1);
-static uint32_t Boot_App(bool package_image);
+static uint32_t Boot_App(uint8_t package_image);
 static int32_t BootApp_RequestStageCores(uint8_t stageNum);
 static int32_t BootApp_ReleaseStageCores(uint8_t stageNum);
 static void BootApp_ArmR5PmuCntrInit();
@@ -152,8 +152,9 @@ static void BootApp_TaskFxn(void *a0, void *a1)
     }
 
     printf_("Please select the startup image\n");
-    printf_("0: Split image (default)\n");
-    printf_("1: Package image\n");
+    printf_("0: app image (default)\n");
+    printf_("1: back up image\n");
+    printf_("2: debug image\n");
     for (int i = 0; i < 4; ++i)
     {
         for (int j = 0; j < 800; ++j)
@@ -178,6 +179,11 @@ boot:
     {
         printf_("loading bakup image\n");
         Boot_App(1);
+    }
+    else if (package_image == '2')
+    {
+        printf_("loading debug image\n");
+        Boot_App(2);
     }
     else
     {
@@ -267,11 +273,11 @@ boot:
     }
 }
 
-uint32_t Boot_App(bool package_image)
+uint32_t Boot_App(uint8_t package_image)
 {
     int32_t retVal;
     cpu_core_id_t core_id;
-    const uint32_t (*flash_image)[NUM_BOOT_STAGES][MAX_CORES_PER_STAGE];
+    uint32_t (*flash_image)[NUM_BOOT_STAGES][MAX_CORES_PER_STAGE];
 
     /* Initialize the entry point array to 0. */
     for (core_id = MPU1_CPU0_ID; core_id < NUM_CORES; core_id++)
@@ -289,13 +295,18 @@ uint32_t Boot_App(bool package_image)
         else
         {
             /*get app entry and copy image from flash*/
-            if (package_image)
+            if (package_image == 1)
             {
-                flash_image = &back_up_boot_flash_images[0][0];
+                flash_image = &back_up_boot_flash_images;
+            }
+            else if (package_image == 2)
+            {
+                back_up_boot_flash_images[0][0] = ALL_CORES_APPS_NUL_FLASH_ADDR;
+                flash_image = &back_up_boot_flash_images;
             }
             else
             {
-                flash_image = &main_boot_flash_images[0][0];
+                flash_image = &main_boot_flash_images;
             }
             for (int j = 0; j < MAX_CORES_PER_STAGE; ++j)
             {

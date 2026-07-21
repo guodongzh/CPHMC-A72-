@@ -41,13 +41,14 @@ extern "C"
 #define CORE6_APPS_FLASH_ADDR     (0x880000)
 #define ALL_CORES_APPS_FLASH_ADDR (0xa80000)
 
-#define CORE0_APPS_NULL_FLASH_ADDR     (0xc80000)
-#define CORE1_APPS_NULL_FLASH_ADDR     (0xc82000)
-#define CORE2_APPS_NULL_FLASH_ADDR     (0xc84000)
-#define CORE3_APPS_NULL_FLASH_ADDR     (0xc86000)
-#define CORE4_APPS_NULL_FLASH_ADDR     (0xc88000)
-#define CORE5_APPS_NULL_FLASH_ADDR     (0xc8a000)
-#define CORE6_APPS_NULL_FLASH_ADDR     (0xc8c000)
+#define ALL_CORES_APPS_NUL_FLASH_ADDR  (0xe80000)
+#define CORE0_APPS_NULL_FLASH_ADDR     (0xe82000)
+#define CORE1_APPS_NULL_FLASH_ADDR     (0xe84000)
+#define CORE2_APPS_NULL_FLASH_ADDR     (0xe86000)
+#define CORE3_APPS_NULL_FLASH_ADDR     (0xe88000)
+#define CORE4_APPS_NULL_FLASH_ADDR     (0xe8a000)
+#define CORE5_APPS_NULL_FLASH_ADDR     (0xe8c000)
+#define CORE6_APPS_NULL_FLASH_ADDR     (0xe8e000)
 
 /* Location Address used as flag to indicate loading of
  * all HLOS appimages for OSPI */

@@ -147,7 +147,7 @@ uint32_t main_boot_flash_images[NUM_BOOT_STAGES][MAX_CORES_PER_STAGE] = {
         0,
     }};
 
-const uint32_t debug_boot_flash_images[NUM_BOOT_STAGES][MAX_CORES_PER_STAGE] = {
+uint32_t debug_boot_flash_images[NUM_BOOT_STAGES][MAX_CORES_PER_STAGE] = {
     {
         CORE0_APPS_NULL_FLASH_ADDR,
         CORE1_APPS_NULL_FLASH_ADDR,
@@ -167,7 +167,7 @@ const uint32_t debug_boot_flash_images[NUM_BOOT_STAGES][MAX_CORES_PER_STAGE] = {
         0,
     }};
 
-const uint32_t back_up_boot_flash_images[NUM_BOOT_STAGES][MAX_CORES_PER_STAGE] = {
+uint32_t back_up_boot_flash_images[NUM_BOOT_STAGES][MAX_CORES_PER_STAGE] = {
     {
         ALL_CORES_APPS_FLASH_ADDR,
         0,

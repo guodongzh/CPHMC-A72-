@@ -44,8 +44,8 @@ extern "C"
 
 extern const sblSlaveCoreInfo_t sbl_late_slave_core_stages_info[NUM_BOOT_STAGES][MAX_CORES_PER_STAGE];
 extern uint32_t main_boot_flash_images[NUM_BOOT_STAGES][MAX_CORES_PER_STAGE];
-extern const uint32_t debug_boot_flash_images[NUM_BOOT_STAGES][MAX_CORES_PER_STAGE];
-extern const uint32_t back_up_boot_flash_images[NUM_BOOT_STAGES][MAX_CORES_PER_STAGE];
+extern uint32_t debug_boot_flash_images[NUM_BOOT_STAGES][MAX_CORES_PER_STAGE];
+extern uint32_t back_up_boot_flash_images[NUM_BOOT_STAGES][MAX_CORES_PER_STAGE];
 extern const cpu_core_id_t boot_array[6];
 
 /* Defines boot order for the first stage of the Main Domain
