@@ -575,8 +575,8 @@ int32_t SBL_OSPIBootImage(sblEntryPoint_t *pEntry)
         goto out;
     }
 
-//    offset = MCU1_0_OSPI_OFFSET;
-//    retVal = SBL_MulticoreImageParse((void *)&offset, MCU1_0_OSPI_OFFSET, pEntry, SBL_SKIP_BOOT_AFTER_COPY);
+   offset = MCU1_1_OSPI_OFFSET;
+   retVal = SBL_MulticoreImageParse((void *)&offset, MCU1_1_OSPI_OFFSET, pEntry, SBL_SKIP_BOOT_AFTER_COPY);
 
 out:
     SBL_ospiClose(&gBoardHandle);

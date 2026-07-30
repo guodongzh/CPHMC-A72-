@@ -59,7 +59,7 @@ extern "C" {
    the OSPI Flash.
 */
 #define SBL_OSPI_OFFSET_SI              (0x100000U)
-#define MCU1_0_OSPI_OFFSET              (0x980000U)
+#define MCU1_1_OSPI_OFFSET              (0x980000U)
 #define SBL_OSPI_OFFSET_SYSFW            (0x80000U)
 #define SBL_OSPI_OFFSET_HSM             (0xC0000U)
 #define SBL_HSM_HEADER                  (0x30)

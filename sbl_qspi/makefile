@@ -11,7 +11,7 @@ all: ${out_name}.tiimage
 
 
 ${out_name}.tiimage: ${out_name}.bin
-	powershell -executionpolicy unrestricted -command ./x509CertificateGen.ps1 -b $< -o $@ -c R5 -l 0x41C00100 -k rom_degenerateKey.pem -d DEBUG -j DBG_FULL_ENABLE -m EFUSE_DEFAULT
+	powershell -executionpolicy unrestricted -command ./x509CertificateGen.ps1 -b $< -o $@ -c R5 -l 0x41C00100 -k rom_degenerateKey.pem -d DEBUG -j DBG_FULL_ENABLE -m SPLIT_MODE
 
 
 ${out_name}.bin: ${out_name}.out
