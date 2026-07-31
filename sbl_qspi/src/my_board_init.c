@@ -219,37 +219,6 @@ void pcie_set_mode(uint32_t ints_num, uint32_t rate,
 }
 
 
-
-void gpio_intr_init()
-{
-    volatile uint32_t *addr = (uint32_t *)(CSL_GPIOMUX_INTRTR0_MUXCNTL_START + (4 * 25));
-    *addr = CSL_GPIOMUX_INTRTR0_MUXCNTL_ENABLE | 23;
-
-    addr = (uint32_t *)(CSL_GPIOMUX_INTRTR0_MUXCNTL_START + (4 * 29));
-    *addr = CSL_GPIOMUX_INTRTR0_MUXCNTL_ENABLE | 24;
-
-    addr = (uint32_t *)(CSL_GPIOMUX_INTRTR0_MUXCNTL_START + (4 * 17));
-    *addr = CSL_GPIOMUX_INTRTR0_MUXCNTL_ENABLE | 25;
-
-    addr = (uint32_t *)(CSL_GPIOMUX_INTRTR0_MUXCNTL_START + (4 * 21));
-    *addr = CSL_GPIOMUX_INTRTR0_MUXCNTL_ENABLE | 26;
-
-    addr = (uint32_t *)(CSL_GPIOMUX_INTRTR0_MUXCNTL_START + (4 * 33));
-    *addr = CSL_GPIOMUX_INTRTR0_MUXCNTL_ENABLE | 27;
-
-    addr = (uint32_t *)(CSL_GPIOMUX_INTRTR0_MUXCNTL_START + (4 * 37));
-    *addr = CSL_GPIOMUX_INTRTR0_MUXCNTL_ENABLE | 28;
-
-    addr = (uint32_t *)(CSL_GPIOMUX_INTRTR0_MUXCNTL_START + (4 * 41));
-    *addr = CSL_GPIOMUX_INTRTR0_MUXCNTL_ENABLE | 29;
-
-    addr = (uint32_t *)(CSL_C66SS0_INTRTR0_MUXCNTL_START + (4 * 61));
-    *addr = CSL_C66SS0_INTRTR0_MUXCNTL_ENABLE | 392;
-
-    addr = (uint32_t *)(CSL_C66SS1_INTRTR0_MUXCNTL_START + (4 * 61));
-    *addr = CSL_C66SS1_INTRTR0_MUXCNTL_ENABLE | 396;
-}
-
 void intr_router_cfg()
 {
     CSL_IntrRouterCfg irRegs;
@@ -264,6 +233,13 @@ void intr_router_cfg()
     CSL_intrRouterCfgMux(&irRegs, CSLR_GPIOMUX_INTRTR0_IN_MAIN_GPIO0_VIRT_OUT0_27_0, 33);
     CSL_intrRouterCfgMux(&irRegs, CSLR_GPIOMUX_INTRTR0_IN_MAIN_GPIO0_VIRT_OUT0_28_0, 37);
     CSL_intrRouterCfgMux(&irRegs, CSLR_GPIOMUX_INTRTR0_IN_MAIN_GPIO0_VIRT_OUT0_29_0, 41);
+    CSL_intrRouterCfgMux(&irRegs, CSLR_GPIOMUX_INTRTR0_IN_MAIN_GPIO0_VIRT_OUT0_30_0, 9);
+
+    irRegs.pIntrRouterRegs = (CSL_intr_router_cfgRegs *)CSL_MAIN2MCU_PLS_INTRTR0_CFG_BASE;
+    irRegs.pIntdRegs = (CSL_intr_router_intd_cfgRegs *)NULL;
+    irRegs.numInputIntrs = 102;
+    irRegs.numOutputIntrs = 48;
+    CSL_intrRouterCfgMux(&irRegs, CSLR_MAIN2MCU_PLS_INTRTR0_IN_GPIOMUX_INTRTR0_OUTP_9, 25);
 
     irRegs.pIntrRouterRegs = (CSL_intr_router_cfgRegs *)CSL_C66SS0_INTROUTER0_INTR_ROUTER_CFG_BASE;
     irRegs.pIntdRegs = (CSL_intr_router_intd_cfgRegs *)NULL;

@@ -332,7 +332,8 @@ int main()
     *gtcRegister = *gtcRegister | CSL_GTC_CFG1_CNTCR_EN_MASK | CSL_GTC_CFG1_CNTCR_HDBG_MASK;
 
     enable_sd_power();
-    gpio_intr_init();
+    // gpio_intr_init();
+    intr_router_cfg();
     SBL_log(SBL_LOG_NONE, "Begin parsing user application\n");
 
     /* Boot all non-SBL cores in multi-core app image */

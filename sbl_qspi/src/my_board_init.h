@@ -79,8 +79,7 @@ void pcie_refclk_to_io(uint32_t ints_num, uint32_t ref_clk);
 void pcie_set_mode(uint32_t ints_num, uint32_t rate,
                    uint32_t mode, uint32_t lane_count);
 void enable_sd_power(void);
-void gpio_intr_init();
-
+void intr_router_cfg();
 
 
 #ifdef __cplusplus
