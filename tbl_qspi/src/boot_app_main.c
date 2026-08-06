@@ -189,8 +189,8 @@ boot:
     {
         printf_("loading default image\n");
 
-        // file_system_init();
-        // boot_cfg_read_main();
+         file_system_init();
+         boot_cfg_read_main();
         for (int i = 0; i < MAX_CORES_PER_STAGE; ++i)
         {
             if (boot_cfg[i] == 1)
