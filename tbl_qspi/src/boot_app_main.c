@@ -23,8 +23,7 @@
 #include "cfg_prase_app.h"
 #include "i2c_bus_init.h"
 
-#include "pscForce.h"
-#include "oem/rxfb_api.h"
+#include "pscEnv.h"
 #include "ti/osal/osal_config.h"
 
 /* ========================================================================== */
@@ -57,8 +56,6 @@ TaskP_Handle gbootTask;
 static uint64_t gtimeBootAppStart, gtimeBootAppFinish;
 
 sblEntryPoint_t gK3xx_evmEntry;
-extern volatile uint32_t ISR_TimeValues[4];
-volatile static uint32_t pre_time = 0;
 
 #define SCISERVER_ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
 HwiP_Handle gSciserverHwiHandles[SCISERVER_HWI_NUM];
@@ -222,53 +219,10 @@ boot:
 
     while (1)
     {
-        uint32_t time0 = 0;
-        uint32_t time1 = 0;
-        uint32_t time2 = 0;
-        uint32_t time3 = 0;
-        TimeStamp_Struct tStamp;
-        float time_ratio = 0.00100;
-
-        osalArch_TimestampGet64_2(&tStamp);
-        time0 = tStamp.lo;
-        if (time0 > pre_time)
-        {
-            ISR_TimeValues[0] = (time0 - pre_time) * time_ratio;
-        }
-        pre_time = time0;
-
-        /*pscode program*/
-        fb_UpdateSysTick();
-        osalArch_TimestampGet64_2(&tStamp);
-        time1 = tStamp.lo;
-        Application_I1_FI();
-        Application_I1_N();
-        Application_I1_FE();
-        osalArch_TimestampGet64_2(&tStamp);
-        time2 = tStamp.lo;
-
-        /*pscode online debug*/
-        PscGetWaveData();
-        PscSetVariable();
-        PscGetWatchData();
-
-        osalArch_TimestampGet64_2(&tStamp);
-        time3 = tStamp.lo;
-
-        if (time2 > time1)
-        {
-            ISR_TimeValues[1] = (time2 - time1) * time_ratio;
-        }
-
-        if (time3 > time0)
-        {
-            ISR_TimeValues[2] = (time3 - time0) * time_ratio;
-        }
-
-        if (time3 > time2)
-        {
-            ISR_TimeValues[3] = (time3 - time2) * time_ratio;
-        }
+        /* PSCode main scan */
+//        Application_I1_FI();
+//        Application_I1_N();
+//        Application_I1_FE();
         Osal_delay(1);
     }
 }
