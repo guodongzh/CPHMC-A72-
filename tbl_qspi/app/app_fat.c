@@ -37,7 +37,7 @@ FILE_FAT_TABLE_STRUCT File_Fat_Table = {
             },
             {
                 // 二级boot
-                .Name = "sbl.tiimage",
+                .Name = "sbl_qspi.tiimage",
                 .Sector_ID = 0,
                 .Sector_Num = 128,
                 .Flash_Pro = FLASH_PRO_CPU_IMAGE,
@@ -51,21 +51,21 @@ FILE_FAT_TABLE_STRUCT File_Fat_Table = {
             },
             {
                 // m3固件
-                .Name = "ti.fs",
+                .Name = "tifs.bin",
                 .Sector_ID = 128,
                 .Sector_Num = 128,
                 .Flash_Pro = FLASH_PRO_CPU_IMAGE,
             },
             {
                 // 三级boot程序
-                .Name = "boot_app.appimage.hs_fs",
+                .Name = "tbl_qspi.appimage.hs_fs",
                 .Sector_ID = 256,
                 .Sector_Num = 128,
                 .Flash_Pro = FLASH_PRO_CPU_IMAGE,
             },
             {
                 // 三级boot程序
-                .Name = "boot_app_null.appimage.hs_fs",
+                .Name = "tbl_null.appimage.hs_fs",
                 .Sector_ID = 256,
                 .Sector_Num = 128,
                 .Flash_Pro = FLASH_PRO_CPU_IMAGE,
@@ -127,7 +127,7 @@ FILE_FAT_TABLE_STRUCT File_Fat_Table = {
             },
             {
                 .Name = "all_cores.appimage.hs_fs",
-                .Sector_ID = 2432,
+                .Sector_ID = 2688,
                 .Sector_Num = 512,
                 .Flash_Pro = FLASH_PRO_CPU_IMAGE,
             },

@@ -23,8 +23,6 @@
 #include "cfg_prase_app.h"
 #include "i2c_bus_init.h"
 
-#include "pscForce.h"
-#include "oem/rxfb_api.h"
 #include "ti/osal/osal_config.h"
 
 /* ========================================================================== */
@@ -222,53 +220,6 @@ boot:
 
     while (1)
     {
-        uint32_t time0 = 0;
-        uint32_t time1 = 0;
-        uint32_t time2 = 0;
-        uint32_t time3 = 0;
-        TimeStamp_Struct tStamp;
-        float time_ratio = 0.00100;
-
-        osalArch_TimestampGet64_2(&tStamp);
-        time0 = tStamp.lo;
-        if (time0 > pre_time)
-        {
-            ISR_TimeValues[0] = (time0 - pre_time) * time_ratio;
-        }
-        pre_time = time0;
-
-        /*pscode program*/
-        fb_UpdateSysTick();
-        osalArch_TimestampGet64_2(&tStamp);
-        time1 = tStamp.lo;
-        Application_I1_FI();
-        Application_I1_N();
-        Application_I1_FE();
-        osalArch_TimestampGet64_2(&tStamp);
-        time2 = tStamp.lo;
-
-        /*pscode online debug*/
-        PscGetWaveData();
-        PscSetVariable();
-        PscGetWatchData();
-
-        osalArch_TimestampGet64_2(&tStamp);
-        time3 = tStamp.lo;
-
-        if (time2 > time1)
-        {
-            ISR_TimeValues[1] = (time2 - time1) * time_ratio;
-        }
-
-        if (time3 > time0)
-        {
-            ISR_TimeValues[2] = (time3 - time0) * time_ratio;
-        }
-
-        if (time3 > time2)
-        {
-            ISR_TimeValues[3] = (time3 - time2) * time_ratio;
-        }
         Osal_delay(1);
     }
 }
