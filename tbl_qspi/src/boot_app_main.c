@@ -55,8 +55,6 @@ TaskP_Handle gbootTask;
 static uint64_t gtimeBootAppStart, gtimeBootAppFinish;
 
 sblEntryPoint_t gK3xx_evmEntry;
-extern volatile uint32_t ISR_TimeValues[4];
-volatile static uint32_t pre_time = 0;
 
 #define SCISERVER_ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
 HwiP_Handle gSciserverHwiHandles[SCISERVER_HWI_NUM];
