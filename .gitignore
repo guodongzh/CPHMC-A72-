@@ -3,7 +3,6 @@
 *.o
 *.obj
 *.tiimage
-*.exe
 Debug/
 Release/
 obj_lib/
