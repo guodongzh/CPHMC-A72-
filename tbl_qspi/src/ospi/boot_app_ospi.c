@@ -138,7 +138,7 @@ int32_t BootApp_OSPI_ReadSectors(void *dstAddr, void *srcOffsetAddr, uint32_t le
     if (dstAddr == NULL || srcOffsetAddr == NULL)
         return -1;
 
-    Board_flashRead(gOspiHandle, *((uint32_t *)srcOffsetAddr), dstAddr, length);
+    Board_flashRead(gOspiHandle, *((uint32_t *)srcOffsetAddr), dstAddr, length, 0);
     SBL_DCacheClean(dstAddr, length);
 
     end_time = CSL_armR5PmuReadCntr(0x1F);
@@ -172,7 +172,7 @@ int32_t BootApp_OSPI_EraseSectors(const uint32_t *desOffsetAddr, uint32_t length
         {
             return status;
         }
-        status = Board_flashEraseBlk(gOspiHandle, sector);
+        status = Board_flashEraseBlk(gOspiHandle, sector, 0);
         if (status != BOARD_FLASH_EOK)
         {
             return status;
@@ -188,7 +188,7 @@ int32_t BootApp_OSPI_WriteSectors(void *srcAddr, void *desOffsetAddr, uint32_t l
     if (srcAddr == NULL || desOffsetAddr == NULL)
         return -1;
 
-    Board_flashWrite(gOspiHandle, *((uint32_t *)desOffsetAddr), srcAddr, length);
+    Board_flashWrite(gOspiHandle, *((uint32_t *)desOffsetAddr), srcAddr, length, 0);
     return 0;
 }
 

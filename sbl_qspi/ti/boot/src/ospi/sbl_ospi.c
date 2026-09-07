@@ -460,7 +460,7 @@ int32_t SBL_ospiFlashRead(const void *handle, uint8_t *dst, uint32_t length,
     Board_flashHandle h = *(const Board_flashHandle *)handle;
     SBL_DCacheClean((void *)dst, length);
     int32_t status = CSL_PASS;
-    status         = Board_flashRead(h, offset, dst, length);
+    status         = Board_flashRead(h, offset, dst, length, 0);
     if (status != CSL_PASS)
     {
         SBL_log(SBL_LOG_ERR, "Board flash Read failed !! ");
@@ -667,7 +667,7 @@ int32_t SBL_ospiCopyHsmImage(uint8_t **dstAddr, uint32_t srcOffsetAddr, uint32_t
     {
         /* In case of OSPI NAND, first hsm.bin should be copied to OCMC memory and then
         pointer to OCMC memory should be passed to Sciclient_procBootAuthAndStart() API */
-        retVal = Board_flashRead(h, srcOffsetAddr, *dstAddr, numBytes);
+        retVal = Board_flashRead(h, srcOffsetAddr, *dstAddr, numBytes, 0);
         if (retVal != CSL_PASS)
         {
             SBL_log(SBL_LOG_ERR, "Board_flashRead failed in SBL_ospiCopyHsmImage !! \n");
