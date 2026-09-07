@@ -1,0 +1,254 @@
+#include "memory_map_defines.h"
+
+
+/*--------------------------------------------------------------------------*/
+/*                               Memory Map                                 */
+/*--------------------------------------------------------------------------*/
+MEMORY
+{
+    /*=================== R5F TCM Local View ======================*/
+    MCU_R5F_TCMA_VECS       (X) : ORIGIN = 0x00000000 LENGTH = 0x00000040
+    MCU_R5F_TCMA            (X) : ORIGIN = 0x00000040 LENGTH = 0x00007FC0
+    MCU_R5F_TCMB_VECS       (X) : ORIGIN = 0x41010000 LENGTH = 0x00000040
+    MCU_R5F_TCMB            (X) : ORIGIN = 0x41010040 LENGTH = 0x00007FC0
+
+    /*==================== MCU R5F TCM SOC View =======================*/
+    /*---------------------- MCU R5FSS0 CORE0 -------------------------*/
+    MCU1_R5F0_ATCM_RSVD  (RWIX) : ORIGIN = 0x41000000 LENGTH = 0x00000040
+    MCU1_R5F0_ATCM       (RWIX) : ORIGIN = 0x41000040 LENGTH = 0x00007FC0
+ // MCU1_R5F0_BTCM_RSVD  (RWIX) : ORIGIN = 0x41010000 LENGTH = 0x00000040 (Documented only, to avoid conflict above with MCU_R5F_TCMB_VECS)
+ // MCU1_R5F0_BTCM       (RWIX) : ORIGIN = 0x41010040 LENGTH = 0x00007FC0 (Documented only, to avoid conflict above with MCU_R5F_TCMB)
+    /*---------------------- MCU R5FSS0 CORE1 -------------------------*/
+    MCU1_R5F1_ATCM_RSVD  (RWIX) : ORIGIN = 0x41400000 LENGTH = 0x00000040
+    MCU1_R5F1_ATCM       (RWIX) : ORIGIN = 0x41400040 LENGTH = 0x00007FC0
+    MCU1_R5F1_BTCM_RSVD  (RWIX) : ORIGIN = 0x41410000 LENGTH = 0x00000040
+    MCU1_R5F1_BTCM       (RWIX) : ORIGIN = 0x41410040 LENGTH = 0x00007FC0
+    /*---------------------- MAIN R5FSS0 CORE0 ------------------------*/
+    MCU2_R5F0_ATCM_RSVD  (RWIX) : ORIGIN = 0x05C00000 LENGTH = 0x00000040
+    MCU2_R5F0_ATCM       (RWIX) : ORIGIN = 0x05C00040 LENGTH = 0x00007FC0
+    MCU2_R5F0_BTCM_RSVD  (RWIX) : ORIGIN = 0x05C10000 LENGTH = 0x00000040
+    MCU2_R5F0_BTCM       (RWIX) : ORIGIN = 0x05C10040 LENGTH = 0x00007FC0
+    /*---------------------- MAIN R5FSS0 CORE1 ------------------------*/
+    MCU2_R5F1_ATCM_RSVD  (RWIX) : ORIGIN = 0x05D00000 LENGTH = 0x00000040
+    MCU2_R5F1_ATCM       (RWIX) : ORIGIN = 0x05D00040 LENGTH = 0x00007FC0
+    MCU2_R5F1_BTCM_RSVD  (RWIX) : ORIGIN = 0x05D10000 LENGTH = 0x00000040
+    MCU2_R5F1_BTCM       (RWIX) : ORIGIN = 0x05D10040 LENGTH = 0x00007FC0
+    /*---------------------- MAIN R5FSS1 CORE0 ------------------------*/
+    MCU3_R5F0_ATCM_RSVD  (RWIX) : ORIGIN = 0x05E00000 LENGTH = 0x00000040
+    MCU3_R5F0_ATCM       (RWIX) : ORIGIN = 0x05E00040 LENGTH = 0x00007FC0
+    MCU3_R5F0_BTCM_RSVD  (RWIX) : ORIGIN = 0x05E10000 LENGTH = 0x00000040
+    MCU3_R5F0_BTCM       (RWIX) : ORIGIN = 0x05E10040 LENGTH = 0x00007FC0
+    /*---------------------- MAIN R5FSS1 CORE1 ------------------------*/
+    MCU3_R5F1_ATCM_RSVD  (RWIX) : ORIGIN = 0x05F00000 LENGTH = 0x00000040
+    MCU3_R5F1_ATCM       (RWIX) : ORIGIN = 0x05F00040 LENGTH = 0x00007FC0
+    MCU3_R5F1_BTCM_RSVD  (RWIX) : ORIGIN = 0x05F10000 LENGTH = 0x00000040
+    MCU3_R5F1_BTCM       (RWIX) : ORIGIN = 0x05F10040 LENGTH = 0x00007FC0
+
+    /*===================== MCU MSRAM Locations =======================*/
+    OCMC_RAM_SBL_RUNTIME (RWIX) : origin = 0x41C00000 length = 0x00080000
+    OCMC_RAM_BOARD_CFG   (RWIX) : ORIGIN = 0x41C80000 LENGTH = 0x00002000
+    OCMC_RAM             (RWIX) : ORIGIN = 0x41C82000 LENGTH = 0x0007DA00
+
+	/* RBL uses 0x41CC0000 and beyond. cannot use this ram */
+    OCMC_RAM_X509_HEADER (RWIX) : ORIGIN = 0x41CFFA00 LENGTH = 0x00000500
+}
+
+
+MEMORY
+{
+    DDR0_RESERVED       (RWIX)  : ORIGIN = DDR0_RESERVED_START      LENGTH = DDR0_RESERVED_SIZE
+
+    /*=================== COMPUTE_CLUSTER0_MSMC_SRAM ==================*/
+    /*---------- J721E Reserved Memory for ARM Trusted Firmware -------*/
+    MSMC3_ARM_FW        (RWIX) : ORIGIN = 0x70000000 LENGTH = 0x00020000   /* 128KB       */
+    /*-----------------------------------------------------------------*/
+    MSMC_R2             (RWIX) : ORIGIN = 0x70020000 LENGTH = 0x63800    /* 398KB */
+    MSMC_R2_VAR         (RWIX) : ORIGIN = 0x70083800 LENGTH = 0xC800     /* 50k */
+
+    MSMC_R3             (RWIX) : ORIGIN = 0x70090000 LENGTH = 0x63800    /* 398KB */
+    MSMC_R3_VAR         (RWIX) : ORIGIN = 0x700f3800 LENGTH = 0xC800     /* 50k */
+
+    MSMC_C71x_VEC       (RWIX) : ORIGIN = 0x70100000 LENGTH = 0x1000     /* 2k */
+    MSMC_C71x           (RWIX) : ORIGIN = 0x70101000 LENGTH = 0x1E6000   /* 2970KB */
+    MSMC_C71x_VAR       (RWIX) : ORIGIN = 0x702E7000 LENGTH = 0x19000    /* 100KB */
+
+	MSMC_MCU1_1         (RWIX) : ORIGIN = 0x70300000 LENGTH = 0x63800    /* 398KB */
+ 	MSMC_MCU1_1_VAR     (RWIX) : ORIGIN = 0x70363800 LENGTH = 0xC800     /* 50k */
+
+    MSMC_PCIE0           (RWIX) : ORIGIN = 0x70400000 LENGTH = 0x100000   /* 1MB */
+    MSMC_PCIE2           (RWIX) : ORIGIN = 0x70500000 LENGTH = 0x100000   /* 1MB */
+    MSMC_PCIE3           (RWIX) : ORIGIN = 0x70600000 LENGTH = 0x100000   /* 1MB */
+
+    /*------------- pscode -----------*/
+    MSMC_watch_tables  (RWIX) : ORIGIN = 0x70700000 LENGTH = 0x0002000   /* 8KB        */
+    MSMC_watch_data    (RWIX) : ORIGIN = 0x70702000 LENGTH = 0x0002000   /* 8KB        */
+    MSMC_force_tables  (RWIX) : ORIGIN = 0x70704000 LENGTH = 0x0002000   /* 8KB        */
+    MSMC_pscode_set_var(RWIX) : ORIGIN = 0x70706000 LENGTH = 0x0001000   /* 4KB        */
+    MSMC_wave_list     (RWIX) : ORIGIN = 0x70707000 LENGTH = 0x0001000   /* 4KB        */
+    MSMC_wave_data     (RWIX) : ORIGIN = 0x70708000 LENGTH = 0x0002000   /* 8KB        */
+    MSMC_wave_data_tmp (RWIX) : ORIGIN = 0x7070a000 LENGTH = 0x0001000   /* 4KB        */
+    MSMC_wave_info_tmp (RWIX) : ORIGIN = 0x7070b000 LENGTH = 0x0001000   /* 4KB        */
+
+    /*------------ Fast Data Access Region -----------------------*/
+    MSMC_R2_FAST_DATA  (RWIX) : ORIGIN = 0x7070c000 LENGTH = 0x0001000   /* 4KB        */
+    MSMC_R3_FAST_DATA  (RWIX) : ORIGIN = 0x7070d000 LENGTH = 0x0001000   /* 4KB        */
+    MSMC_C60_FAST_DATA (RWIX) : ORIGIN = 0x7070e000 LENGTH = 0x0001000   /* 4KB        */
+    MSMC_C61_FAST_DATA (RWIX) : ORIGIN = 0x7070f000 LENGTH = 0x0001000   /* 4KB        */
+    MSMC_C70_FAST_DATA (RWIX) : ORIGIN = 0x70710000 LENGTH = 0x0001000   /* 4KB        */
+    MSMC_MCU_R1_FAST_DATA (RWIX) : ORIGIN = 0x70711000 LENGTH = 0x0001000   /* 4KB     */
+
+    MSMC_IRIGB         (RWIX) : ORIGIN = 0x70712000 LENGTH = 0x0001000   /* 4KB        */
+
+    MSMC_PCIe_MONITOR  (RWIX) : ORIGIN = 0x70713000 LENGTH = 0x000a000   /* 12KB        */
+    /*------------- J721E Reserved Memory for DMSC Firmware -----------*/
+    MSMC_DMSC_FW       (RWIX) : ORIGIN = 0x707F0000 LENGTH = 0x00010000   /* 64KB        */
+
+    /*---------------------------------- MCU R5FSS0 CORE0 ------------------------------*/
+    MCU1_0_IPC_DATA     (RWIX)  : ORIGIN = MCU1_0_IPC_DATA_BASE     LENGTH = IPC_DATA_SIZE
+    MCU1_0_RES_DATA     (RWIX)  : ORIGIN = MCU1_0_RES_DATA_BASE     LENGTH = RES_DATA_SIZE
+    MCU1_0_DDR_SPACE    (RWIX)  : ORIGIN = MCU1_0_DDR_SPACE_BASE    LENGTH = DDR_SPACE_SIZE
+    /*---------------------------------- MCU R5FSS0 CORE1 ------------------------------*/
+    MCU1_1_IPC_DATA     (RWIX)  : ORIGIN = MCU1_1_IPC_DATA_BASE     LENGTH = IPC_DATA_SIZE
+    MCU1_1_RES_DATA     (RWIX)  : ORIGIN = MCU1_1_RES_DATA_BASE     LENGTH = RES_DATA_SIZE
+    MCU1_1_DDR_SPACE    (RWIX)  : ORIGIN = MCU1_1_DDR_SPACE_BASE    LENGTH = DDR_SPACE_SIZE
+    /*---------------------------------- MAIN R5FSS0 CORE0 ------------------------------*/
+    MCU2_0_IPC_DATA     (RWIX)  : ORIGIN = MCU2_0_IPC_DATA_BASE     LENGTH = IPC_DATA_SIZE
+    MCU2_0_RES_DATA     (RWIX)  : ORIGIN = MCU2_0_RES_DATA_BASE     LENGTH = RES_DATA_SIZE
+    MCU2_0_DDR_SPACE    (RWIX)  : ORIGIN = MCU2_0_DDR_SPACE_BASE    LENGTH = DDR_SPACE_SIZE
+    /*---------------------------------- MAIN R5FSS0 CORE0 -----------------------------*/
+    MCU2_1_IPC_DATA     (RWIX)  : ORIGIN = MCU2_1_IPC_DATA_BASE     LENGTH = IPC_DATA_SIZE
+    MCU2_1_RES_DATA     (RWIX)  : ORIGIN = MCU2_1_RES_DATA_BASE     LENGTH = RES_DATA_SIZE
+    MCU2_1_DDR_SPACE    (RWIX)  : ORIGIN = MCU2_1_DDR_SPACE_BASE    LENGTH = DDR_SPACE_SIZE
+    /*---------------------------------- MAIN R5FSS0 CORE0 ------------------------------*/
+    MCU3_0_IPC_DATA     (RWIX)  : ORIGIN = MCU3_0_IPC_DATA_BASE     LENGTH = IPC_DATA_SIZE
+    MCU3_0_RES_DATA     (RWIX)  : ORIGIN = MCU3_0_RES_DATA_BASE    LENGTH = RES_DATA_SIZE
+    MCU3_0_DDR_SPACE    (RWIX)  : ORIGIN = MCU3_0_DDR_SPACE_BASE    LENGTH = DDR_SPACE_SIZE
+    /*---------------------------------- MAIN R5FSS0 CORE0 -----------------------------*/
+    MCU3_1_IPC_DATA     (RWIX)  : ORIGIN = MCU3_1_IPC_DATA_BASE     LENGTH = IPC_DATA_SIZE
+    MCU3_1_RES_DATA     (RWIX)  : ORIGIN = MCU3_1_RES_DATA_BASE     LENGTH = RES_DATA_SIZE
+    MCU3_1_DDR_SPACE    (RWIX)  : ORIGIN = MCU3_1_DDR_SPACE_BASE    LENGTH = DDR_SPACE_SIZE
+    /*---------------------------------- C66x DSP CORE1 ---------------------------------*/
+    C66X1_IPC_DATA         (RWIX)  : ORIGIN = C66x1_IPC_DATA_BASE      LENGTH = IPC_DATA_SIZE
+    C66X1_RES_DATA      (RWIX)  : ORIGIN = C66x1_RES_DATA_BASE      LENGTH = RES_DATA_SIZE
+    C66X1_DDR_SPACE     (RWIX)  : ORIGIN = C66x1_DDR_SPACE_BASE     LENGTH = DDR_SPACE_SIZE
+    /*---------------------------------- C66x DSP CORE2 ---------------------------------*/
+    C66X2_IPC_DATA         (RWIX)  : ORIGIN = C66x2_IPC_DATA_BASE      LENGTH = IPC_DATA_SIZE
+    C66X2_RES_DATA      (RWIX)  : ORIGIN = C66x2_RES_DATA_BASE      LENGTH = RES_DATA_SIZE
+    C66X2_DDR_SPACE     (RWIX)  : ORIGIN = C66x2_DDR_SPACE_BASE     LENGTH = DDR_SPACE_SIZE
+    /*---------------------------------- C7x-------- -----------------------------------*/
+    C7X_IPC_DATA           (RWIX)  : ORIGIN = C7x_1_IPC_DATA_BASE     LENGTH = IPC_DATA_SIZE
+    C7X_RES_DATA        (RWIX)  : ORIGIN = C7x_1_RES_DATA_BASE     LENGTH = RES_DATA_SIZE
+    C7X_DDR_SPACE       (RWIX)  : ORIGIN = C7x_1_DDR_SPACE_BASE    LENGTH = DDR_SPACE_SIZE
+    /*---------------------------------- Shared Region ----------------------------------------*/
+    IPC_VRING_SPACE    (RW)   : ORIGIN = IPC_VRING_SPACE_START  LENGTH = IPC_VRING_SPACE_SIZE
+
+    /*---------------------------------- pcie data Region -----------------------------*/
+    PCIE0_IB_SPACE  (RW)  : ORIGIN = PCIE0_IB_BASE      LENGTH = PCIE0_IB_SIZE
+    PCIE2_IB_SPACE  (RW)  : ORIGIN = PCIE2_IB_BASE      LENGTH = PCIE0_IB_SIZE
+    PCIE3_IB_SPACE  (RW)  : ORIGIN = PCIE3_IB_BASE      LENGTH = PCIE0_IB_SIZE
+
+    /*-------------------------------- PScode variable Access Region ------------------------*/
+    R0_PSCODE_VAR_SPACE  (RW)     : ORIGIN = R0_PSCODE_VAR_BASE   LENGTH = PSCODE_VAR_SIZE
+    R1_PSCODE_VAR_SPACE  (RW)     : ORIGIN = R1_PSCODE_VAR_BASE   LENGTH = PSCODE_VAR_SIZE
+    R2_PSCODE_VAR_SPACE  (RW)     : ORIGIN = R2_PSCODE_VAR_BASE   LENGTH = PSCODE_VAR_SIZE
+    R3_PSCODE_VAR_SPACE  (RW)     : ORIGIN = R3_PSCODE_VAR_BASE   LENGTH = PSCODE_VAR_SIZE
+    C60_PSCODE_VAR_SPACE  (RW)    : ORIGIN = C60_PSCODE_VAR_BASE   LENGTH = PSCODE_VAR_SIZE
+    C61_PSCODE_VAR_SPACE  (RW)    : ORIGIN = C61_PSCODE_VAR_BASE   LENGTH = PSCODE_VAR_SIZE
+    C70_PSCODE_VAR_SPACE  (RW)    : ORIGIN = C70_PSCODE_VAR_BASE   LENGTH = PSCODE_VAR_SIZE
+    MCU_R1_PSCODE_VAR_SPACE  (RW) : ORIGIN = MCU_R1_PSCODE_VAR_BASE LENGTH = PSCODE_VAR_SIZE
+
+
+    /*-------------------------------- all core firmware Region ------------------------*/
+    FW_SPACE  (RWIX)     : ORIGIN = FW_BASE   LENGTH = FW_DATA_SIZE
+
+    /*---------------------------------- Fast Data Access Region --------------------------------*/
+    R0_FAST_DATA_SPACE  (RW)   : ORIGIN = R0_FAST_DATA_BASE   LENGTH = FAST_DATA_SIZE
+    R1_FAST_DATA_SPACE  (RW)   : ORIGIN = R1_FAST_DATA_BASE   LENGTH = FAST_DATA_SIZE
+    R2_FAST_DATA_SPACE  (RW)   : ORIGIN = R2_FAST_DATA_BASE   LENGTH = FAST_DATA_SIZE
+    R3_FAST_DATA_SPACE  (RW)   : ORIGIN = R3_FAST_DATA_BASE   LENGTH = FAST_DATA_SIZE
+    C60_FAST_DATA_SPACE  (RW)  : ORIGIN = C60_FAST_DATA_BASE   LENGTH = FAST_DATA_SIZE
+    C61_FAST_DATA_SPACE  (RW)  : ORIGIN = C61_FAST_DATA_BASE   LENGTH = FAST_DATA_SIZE
+    C70_FAST_DATA_SPACE  (RW)  : ORIGIN = C70_FAST_DATA_BASE   LENGTH = FAST_DATA_SIZE
+	MCU1_FAST_DATA_SPACE  (RW)  : ORIGIN = MCU1_FAST_DATA_BASE   LENGTH = FAST_DATA_SIZE
+    R0_CORE_RESERVE_SPACE  (RW)  : ORIGIN = R0_CORE_RESERVE_BASE   LENGTH = CORE_RESERVE_SIZE
+    R1_CORE_RESERVE_SPACE  (RW)  : ORIGIN = R1_CORE_RESERVE_BASE   LENGTH = CORE_RESERVE_SIZE
+    R2_CORE_RESERVE_SPACE  (RW)  : ORIGIN = R2_CORE_RESERVE_BASE   LENGTH = CORE_RESERVE_SIZE
+    R3_CORE_RESERVE_SPACE  (RW)  : ORIGIN = R3_CORE_RESERVE_BASE   LENGTH = CORE_RESERVE_SIZE
+    C60_CORE_RESERVE_SPACE (RW)  : ORIGIN = C60_CORE_RESERVE_BASE  LENGTH = CORE_RESERVE_SIZE
+    C61_CORE_RESERVE_SPACE (RW)  : ORIGIN = C61_CORE_RESERVE_BASE  LENGTH = CORE_RESERVE_SIZE
+    C70_CORE_RESERVE_SPACE (RW)  : ORIGIN = C70_CORE_RESERVE_BASE  LENGTH = CORE_RESERVE_SIZE
+    MCU1_CORE_RESERVE_SPACE (RW) : ORIGIN = MCU1_CORE_RESERVE_BASE LENGTH = CORE_RESERVE_SIZE
+#if (Core != 7)
+
+    /*----------------------------------SCADA data Region -----------------------------*/
+    SCADA_CFG_SPACE (RW)   : ORIGIN = SCADA_CFG_BASE   LENGTH = SCADA_DATA_SIZE
+    YX_DATA_SPACE (RW)     : ORIGIN = YX_DATA_BASE   LENGTH = SCADA_DATA_SIZE
+    YK_DATA_SPACE (RW)     : ORIGIN = YK_DATA_BASE   LENGTH = SCADA_DATA_SIZE
+    YC_DATA_SPACE (RW)     : ORIGIN = YC_DATA_BASE   LENGTH = SCADA_DATA_SIZE
+    YT_DATA_SPACE (RW)     : ORIGIN = YT_DATA_BASE   LENGTH = SCADA_DATA_SIZE
+#endif
+
+    /*---------------------------------- TFR data Region -----------------------------*/
+    R0_TFR_SPACE     (RW)  : ORIGIN = R0_TFR_MEM_BASE      LENGTH = TFR_MEM_SIZE
+    R1_TFR_SPACE     (RW)  : ORIGIN = R1_TFR_MEM_BASE      LENGTH = TFR_MEM_SIZE
+    R2_TFR_SPACE     (RW)  : ORIGIN = R2_TFR_MEM_BASE      LENGTH = TFR_MEM_SIZE
+    R3_TFR_SPACE     (RW)  : ORIGIN = R3_TFR_MEM_BASE      LENGTH = TFR_MEM_SIZE
+    C60_TFR_SPACE    (RW)  : ORIGIN = C60_TFR_MEM_BASE     LENGTH = TFR_MEM_SIZE
+    C61_TFR_SPACE    (RW)  : ORIGIN = C61_TFR_MEM_BASE     LENGTH = TFR_MEM_SIZE
+    C71_TFR_SPACE    (RW)  : ORIGIN = C71_TFR_MEM_BASE     LENGTH = TFR_MEM_SIZE
+    MCU1_TFR_SPACE    (RW) : ORIGIN = MCU1_TFR_MEM_BASE    LENGTH = TFR_MEM_SIZE
+
+    /*---------------------------Init flag space ------------------------*/
+    INIT_FLGA_SPACE (RW) : ORIGIN = INIT_FLGA_BASE   LENGTH = INIT_FLAG_SIZE
+
+    /*---------------------------FT3 TX/RX CFG space ------------------------*/
+    FT3_TX_CFG_SPACE (RW) : ORIGIN = FT3_TX_CFG_BASE   LENGTH = FT3_TX_CFG_SIZE
+    FT3_RX_CFG_SPACE (RW) : ORIGIN = FT3_RX_CFG_BASE   LENGTH = FT3_RX_CFG_SIZE
+
+    SQU_MOD_CFG_SPACE (RW) : ORIGIN = SQU_MOD_CFG_BASE   LENGTH = SQU_MOD_CFG_SIZE
+
+    /*---------------------------------- ETH data Region -----------------------------*/
+    ETH_INFO_SPACE   (RWIX)  : ORIGIN = ETH_INFO_MEM_BASE     LENGTH = ETH_INFO_MEM_SIZE
+    ETH_RX_QUE_SPACE (RWIX)  : ORIGIN = ETH_RX_QUE_MEM_BASE   LENGTH = ETH_RX_QUE_MEM_SIZE
+
+    R1_TX_R0_ETH_MEM     (RWIX)  : ORIGIN = R1_TX_R0_ETH_MEM_BASE,      LENGTH = R5_ETH_TX_BUF_SIZE * 2
+    R2_TX_R0_ETH_MEM     (RWIX)  : ORIGIN = R2_TX_R0_ETH_MEM_BASE,      LENGTH = R5_ETH_TX_BUF_SIZE * 2
+    R3_TX_R0_ETH_MEM     (RWIX)  : ORIGIN = R3_TX_R0_ETH_MEM_BASE,      LENGTH = R5_ETH_TX_BUF_SIZE * 2
+    A72_TX_R0_ETH_MEM    (RWIX)  : ORIGIN = A72_TX_R0_ETH_MEM_BASE,     LENGTH = A72_ETH_TX_BUF_SIZE
+    R0_MULTICAST_ETH_MEM (RWIX)  : ORIGIN = R0_MULTICAST_ETH_MEM_BASE,  LENGTH = R5_ETH_TX_BUF_SIZE
+
+    R0_TX_R1_ETH_MEM     (RWIX)  : ORIGIN = R0_TX_R1_ETH_MEM_BASE,      LENGTH = R5_ETH_TX_BUF_SIZE
+    R2_TX_R1_ETH_MEM     (RWIX)  : ORIGIN = R2_TX_R1_ETH_MEM_BASE,      LENGTH = R5_ETH_TX_BUF_SIZE
+    R3_TX_R1_ETH_MEM     (RWIX)  : ORIGIN = R3_TX_R1_ETH_MEM_BASE,      LENGTH = R5_ETH_TX_BUF_SIZE
+    R1_MULTICAST_ETH_MEM (RWIX)  : ORIGIN = R1_MULTICAST_ETH_MEM_BASE,  LENGTH = R5_ETH_TX_BUF_SIZE
+
+    R0_TX_R2_ETH_MEM     (RWIX)  : ORIGIN = R0_TX_R2_ETH_MEM_BASE,      LENGTH = R5_ETH_TX_BUF_SIZE
+    R1_TX_R2_ETH_MEM     (RWIX)  : ORIGIN = R1_TX_R2_ETH_MEM_BASE,      LENGTH = R5_ETH_TX_BUF_SIZE
+    R3_TX_R2_ETH_MEM     (RWIX)  : ORIGIN = R3_TX_R2_ETH_MEM_BASE,      LENGTH = R5_ETH_TX_BUF_SIZE
+    R2_MULTICAST_ETH_MEM (RWIX)  : ORIGIN = R2_MULTICAST_ETH_MEM_BASE,  LENGTH = R5_ETH_TX_BUF_SIZE
+
+    R0_TX_R3_ETH_MEM     (RWIX)  : ORIGIN = R0_TX_R3_ETH_MEM_BASE,      LENGTH = R5_ETH_TX_BUF_SIZE
+    R1_TX_R3_ETH_MEM     (RWIX)  : ORIGIN = R1_TX_R3_ETH_MEM_BASE,      LENGTH = R5_ETH_TX_BUF_SIZE
+    R2_TX_R3_ETH_MEM     (RWIX)  : ORIGIN = R2_TX_R3_ETH_MEM_BASE,      LENGTH = R5_ETH_TX_BUF_SIZE
+    R3_MULTICAST_ETH_MEM (RWIX)  : ORIGIN = R3_MULTICAST_ETH_MEM_BASE,  LENGTH = R5_ETH_TX_BUF_SIZE
+
+    /*----------------------------------PScode runtime -----------------------------*/
+    PSCode_WATCH_SPACE (RW)  : ORIGIN = PSCode_WATCH_TAB_BASE   LENGTH = PSCode_WATCH_TAB_SIZE
+    PSCode_WATCH_DATA_SPACE (RW)  : ORIGIN = PSCode_WATCH_DATA_BASE   LENGTH = PSCode_WATCH_DATA_SIZE
+    PSCode_VARS_SPACE (RW)  : ORIGIN = PSCode_VARS_MEM_BASE   LENGTH = PSCode_VARS_MEM_SIZE
+    PSCode_VAR_SPACE (RW)  : ORIGIN = PSCode_VAR_MEM_BASE   LENGTH = PSCode_VAR_MEM_SIZE
+    PSCode_RES_VER_SPACE (RW)  : ORIGIN = PSCode_RES_VER_BASE   LENGTH = PSCode_RES_VER_SIZE
+
+    /*---------------------------VERSION_SPACE ------------------------*/
+    VERSION_SPACE (RW) : ORIGIN = VERSION_BASE   LENGTH = VERSION_SIZE
+
+    /*---------------------------IRIGB_SHM_SPACE ------------------------*/
+    IRIGB_SHM_SPACE (RW) : ORIGIN = IRIGB_BASE   LENGTH = IRIGB_SIZE
+
+    /*---------------------------TEST FALG ------------------------*/
+    LINUX_TEST_SPACE (RW) : ORIGIN = LINUX_TEST_FLAG_BASE   LENGTH = LINUX_TEST_FLAG_SIZE
+
+    /*---------------------------LINUX NET FALG ------------------------*/
+    LINUX_NET_SPACE (RW) : ORIGIN = LINUX_ENT_FLAG_BASE   LENGTH = LINUX_ENT_FLAG_SIZE
+
+}

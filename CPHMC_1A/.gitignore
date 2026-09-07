@@ -1,0 +1,5 @@
+.codegraph/
+.idea/
+cmake-build-*/
+/.gitattributes
+/tools/sync_to_windows.sh
