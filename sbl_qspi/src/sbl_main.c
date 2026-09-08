@@ -13,7 +13,7 @@
 #include "ecc_ddr.h"
 #include "app_version.h"
 #include "j721e_init.h"
-
+#include "ti/boot/soc/k3/sbl_qos.h"
 /**********************************************************************
  ************************** Global Variables **************************
  **********************************************************************/
@@ -291,12 +291,23 @@ int main()
 #endif
 
 #if defined(SBL_ENABLE_DDR) && defined(SBL_ENABLE_PLL) && defined(SBL_ENABLE_CLOCKS)  && !defined(SBL_SKIP_SYSFW_INIT)
-    SBL_log(SBL_LOG_NONE, "Initlialzing DDR ...");
+    SBL_log(SBL_LOG_NONE, "Initlialzing DDR @ %u MT/s ...", BOARD_DDR_RATE_MT_S);
     status = Board_init(BOARD_INIT_DDR | BOARD_INIT_DDR_ECC);
 //    ecc_test();
     if (status == BOARD_SOK)
     {
         SBL_log(SBL_LOG_NONE, "done.\n");
+#if defined(SOC_J721E) && !defined(SBL_USE_MCU_DOMAIN_ONLY)
+        /*
+         * MSMC_CFG (0x6e00xxxx) is not accessible from the MCU R5F SBL on
+         * this platform even after DDR initialization; a direct access
+         * stalls the boot CPU.  Keep this opt-in and apply MSMC starvation
+         * bounds later from an authorized Linux context by default.
+         */
+#if defined(SBL_ENABLE_MSMC_QOS_FROM_MCU_R5)
+        SBL_SetMSMCQoS();
+#endif
+#endif
     }
     else
     {

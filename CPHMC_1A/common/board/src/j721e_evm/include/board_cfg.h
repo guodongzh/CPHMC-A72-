@@ -58,6 +58,11 @@ extern "C" {
 #define BOARD_DDR_START_ADDR                            (0x80000000U)
 #define BOARD_DDR_SIZE                                  (2048 * 1024 * 1024UL)
 #define BOARD_DDR_END_ADDR                              (0xFFFFFFFFU)
+
+/* LPDDR4 data rate. Supported generated register sets: 2400 and 4266 MT/s. */
+#ifndef BOARD_DDR_RATE_MT_S
+#define BOARD_DDR_RATE_MT_S                             (2400U)
+#endif
 /* Note with ECC enabled, all memory is not usable: 1/8 memory used for inline ECC */
 #define BOARD_DDR_ECC_END_ADDR                          (0xF1C71C00U)
 /* Enable/Disable DDR Memory Prime for ECC. Define the following macro to enable. */ 

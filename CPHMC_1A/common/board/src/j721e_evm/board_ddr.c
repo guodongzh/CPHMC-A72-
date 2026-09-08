@@ -32,7 +32,23 @@
  *****************************************************************************/
 #include <string.h>
 #include "board/src/j721e_evm/include/board_ddr.h"
+/*
+ * Select the complete DDRSS register set together with its matching PLL
+ * frequency.  Do not change only DDRSS_PLL_FREQUENCY_1/2: controller, PI and
+ * PHY timings are frequency dependent.
+ */
+#ifndef BOARD_DDR_RATE_MT_S
+#define BOARD_DDR_RATE_MT_S (2400U)
+#endif
+
+#if (BOARD_DDR_RATE_MT_S == 2400U)
+#include "board/src/j721e_evm/include/board_ddrRegInit_2400.h"
+#elif (BOARD_DDR_RATE_MT_S == 4266U)
 #include "board/src/j721e_evm/include/board_ddrRegInit.h"
+#else
+#error "Unsupported BOARD_DDR_RATE_MT_S; supported values are 2400 and 4266"
+#endif
+
 
 /* Global variables */
 static LPDDR4_Config gBoardDdrCfg;
@@ -268,28 +284,55 @@ static Board_STATUS Board_DDRHWRegInit(void)
 
 static void Board_DDRPriorityInit(void)
 {
-    /* Flatten out AXI priorities so that VBUSM.C priorities take effect */
+    /*
+     * Apply the final DDRSS policy here, after LPDDR4_WriteCtlConfig().  The
+     * generated table writes controller registers such as CTL_276, so an
+     * earlier PRIORITY_EN write could be overwritten.  Keep the V2A maps in
+     * the same final stage so there is a single authoritative configuration.
+     *
+     * Route IDs used at the DDR V2A ingress on J721E:
+     *   A72 direct: 0x000, 0x001 and 0x004
+     *   C7x direct: 0x00c
+     *   DRU0:       0x068
+     *   C66SS0 MDMA: 0x240
+     *   C66SS1 MDMA: 0x242
+     *
+     * Priority 0 is highest and priority 7 is lowest.  Promote the C66x
+     * memory masters and demote A72, C7x and DRU0.  Program both LPT and HPT
+     * maps so the per-master priority is independent of the incoming thread.
+     *
+     * R1: mask A=1 matches RouteID 0x000-0x001; exact B matches 0x004.
+     * R2: exact A/B matches RouteID 0x00c and 0x068.
+     * R3: exact A/B matches RouteID 0x240 and 0x242.  R3 has the highest
+     *     range-match precedence, although these ranges do not overlap.
+     */
+    const uint32_t priMapLinear = 0x01234567U;
+    const uint32_t priMapHigh = 0x00000000U;
+    const uint32_t priMapLow = 0x77777777U;
+    const uint32_t routeMatchA72 = 0x90008004U;
+    const uint32_t routeMatchC7xDru0 = 0x800C8068U;
+    const uint32_t routeMatchC66x = 0x82408242U;
     uint32_t regVal;
-    uint32_t regAddr;
 
-    regVal = 0U;
-	regVal = (0x7U << 28) |
-             (0x7U << 24) |
-             (0x7U << 20) |
-             (0x7U << 16) |
-             (0x7U << 12) |
-             (0x7U <<  8) |
-             (0x7U <<  4) |
-             (0x7U <<  0);
+    HW_WR_REG32(0x02980024U, routeMatchA72);    /* DDRSS_V2A_R1_MAT_REG */
+    HW_WR_REG32(0x02980028U, routeMatchC7xDru0); /* DDRSS_V2A_R2_MAT_REG */
+    HW_WR_REG32(0x0298002CU, routeMatchC66x);   /* DDRSS_V2A_R3_MAT_REG */
 
-    regAddr = 0x02980030U; /* DDRSS_V2A_LPT_DEF_PRI_MAP_REG */
-    HW_WR_REG32(regAddr, regVal);
+    HW_WR_REG32(0x02980030U, priMapLinear); /* LPT default */
+    HW_WR_REG32(0x02980034U, priMapLow);    /* LPT R1: A72 */
+    HW_WR_REG32(0x02980038U, priMapHigh);    /* LPT R2: C7x/DRU0 */
+    HW_WR_REG32(0x0298003CU, 0x22222222U);   /* LPT R3: C66x */
 
-    regAddr = 0x0298004CU; /* DDRSS_V2A_HPT_DEF_PRI_MAP_REG */
-    HW_WR_REG32(regAddr, regVal);
+    HW_WR_REG32(0x0298004CU, priMapLinear); /* HPT default */
+    HW_WR_REG32(0x02980050U, priMapLow);    /* HPT R1: A72 */
+    HW_WR_REG32(0x02980054U, priMapHigh);    /* HPT R2: C7x/DRU0 */
+    HW_WR_REG32(0x02980058U, 0x22222222U);   /* HPT R3: C66x */
+
+    /* Preserve the generated DDR scheduler settings and enable priority. */
+    regVal = HW_RD_REG32(0x02990450U); /* DDRSS_CTL_276 */
+    HW_WR_REG32(0x02990450U, regVal | 0x1U);
 
 }
-
 /**
  * \brief   DDR start function
  *

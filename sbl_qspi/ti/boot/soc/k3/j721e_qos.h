@@ -214,8 +214,9 @@
 
 
 #define QOS_VPAC0_LDC0_ORDER_ID              (1U)
-#define QOS_C66SS0_MDMA_ORDER_ID             (5U)
-#define QOS_C66SS1_MDMA_ORDER_ID             (5U)
+/* Order IDs 8-15 are mapped to the RT thread by setup_navss_nb(). */
+#define QOS_C66SS0_MDMA_ORDER_ID             (8U)
+#define QOS_C66SS1_MDMA_ORDER_ID             (9U)
 #define QOS_ENCODER0_RD_ORDER_ID             (6U)
 #define QOS_ENCODER0_WR_ORDER_ID             (6U)
 #define QOS_DECODER0_RD_ORDER_ID             (6U)

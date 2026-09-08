@@ -53,5 +53,5 @@ struct k3_qos_data {
 };
 
 void SBL_SetQoS();
-
+void SBL_SetMSMCQoS(void);
 #endif /* _SBL_QOS_H_ */
