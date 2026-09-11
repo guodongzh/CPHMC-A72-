@@ -28,8 +28,11 @@ extern "C"
    the OSPI Flash.
 */
 
-/* Location of ATF/OPTEE - used for both Linux  */
-#define ATF_SPL_FLASH_ADDR (0x180000U)
+/* A72 slot: TI ATF + TI OP-TEE + A72 bare-metal BL33 combined AppImage. */
+#define A72_APP_FLASH_ADDR (0x180000U)
+
+/* Kept for the existing HLOS/combined-image helper in boot_app_ospi.c. */
+#define ATF_SPL_FLASH_ADDR A72_APP_FLASH_ADDR
 
 /* Location of rtos app */
 #define CORE0_APPS_FLASH_ADDR     (0x280000)

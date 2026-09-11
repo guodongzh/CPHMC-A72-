@@ -138,7 +138,7 @@ uint32_t main_boot_flash_images[NUM_BOOT_STAGES][MAX_CORES_PER_STAGE] = {
         CORE6_APPS_FLASH_ADDR,
     },
     {
-        ATF_SPL_FLASH_ADDR,
+        A72_APP_FLASH_ADDR,
         0,
         0,
         0,
@@ -158,7 +158,7 @@ uint32_t debug_boot_flash_images[NUM_BOOT_STAGES][MAX_CORES_PER_STAGE] = {
         CORE6_APPS_NULL_FLASH_ADDR,
     },
     {
-        ATF_SPL_FLASH_ADDR,
+        A72_APP_FLASH_ADDR,
         0,
         0,
         0,
@@ -178,7 +178,32 @@ uint32_t back_up_boot_flash_images[NUM_BOOT_STAGES][MAX_CORES_PER_STAGE] = {
         0,
     },
     {
-        ATF_SPL_FLASH_ADDR,
+        A72_APP_FLASH_ADDR,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+    }};
+
+/*
+ * Mode 3 loads the same combined debug/NULL image used by mode 2 for the
+ * non-A72 cores. Stage 1 deliberately contains no A72 image so CCS/JTAG can
+ * connect, load A72_BareMetal.elf and start it independently.
+ */
+uint32_t a72_noos_boot_flash_images[NUM_BOOT_STAGES][MAX_CORES_PER_STAGE] = {
+    {
+        ALL_CORES_APPS_NUL_FLASH_ADDR,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+    },
+    {
+        0,
         0,
         0,
         0,

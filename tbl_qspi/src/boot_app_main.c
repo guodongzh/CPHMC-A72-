@@ -41,6 +41,9 @@ static void BootApp_TaskFxn(void *a0, void *a1);
 static uint32_t Boot_App(uint8_t package_image);
 static int32_t BootApp_RequestStageCores(uint8_t stageNum);
 static int32_t BootApp_ReleaseStageCores(uint8_t stageNum);
+static int32_t BootApp_EnableA72ForJtag(void);
+static int32_t BootApp_EnableA72Gpio(void);
+static int32_t BootApp_EnableA72Uart(void);
 static void BootApp_ArmR5PmuCntrInit();
 static uint32_t BootApp_GetTimeInMicroSec(uint32_t pmuCntrVal);
 static uint32_t BootApp_SetupSciServer(void);
@@ -151,6 +154,7 @@ static void BootApp_TaskFxn(void *a0, void *a1)
     printf_("0: app image (default)\n");
     printf_("1: back up image\n");
     printf_("2: debug image\n");
+    printf_("3: debug image for other cores (A72 skipped for JTAG)\n");
     for (int i = 0; i < 4; ++i)
     {
         for (int j = 0; j < 800; ++j)
@@ -180,6 +184,11 @@ boot:
     {
         printf_("loading debug image\n");
         Boot_App(2);
+    }
+    else if (package_image == '3')
+    {
+        printf_("loading debug image for other cores; A72 is skipped\n");
+        Boot_App(3);
     }
     else
     {
@@ -253,6 +262,10 @@ uint32_t Boot_App(uint8_t package_image)
                 back_up_boot_flash_images[0][0] = ALL_CORES_APPS_NUL_FLASH_ADDR;
                 flash_image = &back_up_boot_flash_images;
             }
+            else if (package_image == 3)
+            {
+                flash_image = &a72_noos_boot_flash_images;
+            }
             else
             {
                 flash_image = &main_boot_flash_images;
@@ -282,6 +295,36 @@ uint32_t Boot_App(uint8_t package_image)
                     printf_("Failed to release all late cores\n\n");
                 }
             }
+        }
+    }
+
+    if (package_image == 3U)
+    {
+        int32_t a72JtagStatus = BootApp_EnableA72ForJtag();
+        if (a72JtagStatus != CSL_PASS)
+        {
+            printf_("Warning: failed to enable A72 clock for JTAG, status=%d\n",
+                    a72JtagStatus);
+        }
+    }
+
+    if (retVal == CSL_PASS)
+    {
+        /* GPIO0 is used by the A72 BL33 CPHMC-1A board-support driver. */
+        retVal = BootApp_EnableA72Gpio();
+        if (retVal != CSL_PASS)
+        {
+            printf_("Failed to enable GPIO0 for A72 BL33, status=%d\n", retVal);
+        }
+    }
+
+    if (retVal == CSL_PASS)
+    {
+        /* WKUP_UART0 is the A72 BL33 console and its RX interrupt source. */
+        retVal = BootApp_EnableA72Uart();
+        if (retVal != CSL_PASS)
+        {
+            printf_("Failed to enable WKUP_UART0 for A72 BL33, status=%d\n", retVal);
         }
     }
 
@@ -375,6 +418,58 @@ static int32_t BootApp_ReleaseStageCores(uint8_t stageNum)
     }
 
     return (status);
+}
+
+/*
+ * Mode 3 intentionally has no A72 image/entry point. Power the A72 device and
+ * program its normal functional clock through the same TI Sciclient PM APIs
+ * used by SBL_SlaveCoreBoot(), but do not configure or start the processor.
+ * This leaves CortexA72_0 available for CCS/JTAG without Error -2081.
+ */
+static int32_t BootApp_EnableA72ForJtag(void)
+{
+    int32_t status;
+
+    status = Sciclient_pmSetModuleClkFreq(SBL_DEV_ID_MPU1_CPU0,
+                                          SBL_CLK_ID_MPU1_CPU0,
+                                          SBL_MPU1_CPU0_FREQ_HZ,
+                                          TISCI_MSG_FLAG_AOP,
+                                          SCICLIENT_SERVICE_WAIT_FOREVER);
+    if (status == CSL_PASS)
+    {
+        status = Sciclient_pmSetModuleState(SBL_DEV_ID_MPU1_CPU0,
+                                            TISCI_MSG_VALUE_DEVICE_SW_STATE_ON,
+                                            TISCI_MSG_FLAG_AOP,
+                                            SCICLIENT_SERVICE_WAIT_FOREVER);
+    }
+
+    if (status == CSL_PASS)
+    {
+        printf_("A72 module clock is ON; no A72 entry was started (JTAG ready)\n");
+    }
+
+    return status;
+}
+
+/*
+ * GPIO0 hosts CPHMC-1A SYS_BOOTMODE0 (GPIO0_6) and SYS_BOOTMODE2
+ * (GPIO0_48) after the boot strap values have been latched.  It must be
+ * clocked before the A72 BL33 image reads or writes the GPIO register block.
+ */
+static int32_t BootApp_EnableA72Gpio(void)
+{
+    return Sciclient_pmSetModuleState(TISCI_DEV_GPIO0,
+                                      TISCI_MSG_VALUE_DEVICE_SW_STATE_ON,
+                                      TISCI_MSG_FLAG_AOP,
+                                      SCICLIENT_SERVICE_WAIT_FOREVER);
+}
+
+static int32_t BootApp_EnableA72Uart(void)
+{
+    return Sciclient_pmSetModuleState(TISCI_DEV_WKUP_UART0,
+                                      TISCI_MSG_VALUE_DEVICE_SW_STATE_ON,
+                                      TISCI_MSG_FLAG_AOP,
+                                      SCICLIENT_SERVICE_WAIT_FOREVER);
 }
 
 void BootApp_ArmR5PmuCntrInit()
