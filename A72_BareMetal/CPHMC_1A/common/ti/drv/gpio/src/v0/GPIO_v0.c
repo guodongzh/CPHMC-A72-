@@ -247,7 +247,7 @@ static void GPIO_enableInt_v0(uint32_t idx)
 *  ======== GPIO_hwiIntFxn ========
 *  Hwi function that processes GPIO interrupts.
 */
-static void GPIO_v0_hwiFxn(uintptr_t portIdx)
+static void __attribute__((unused)) GPIO_v0_hwiFxn(uintptr_t portIdx)
 {
     uint32_t          gpioIntStatus;
     uint32_t          gpioBase;
@@ -316,12 +316,12 @@ static void GPIO_init_v0(void)
     for (i = 0; i < numPorts; i++)
     {
         if(i < GPIO_MAX_HWATTRS_V0_CNT)
-	{
-	    for (j = 0; j < numPins; j++)
+        {
+            for (j = 0; j < numPins; j++)
             {
-	        gpioCallbackInfo[i].pinIndex[j] = CALLBACK_INDEX_NOT_CONFIGURED;
-	    }
-	}
+                gpioCallbackInfo[i].pinIndex[j] = CALLBACK_INDEX_NOT_CONFIGURED;
+            }
+        }
     }
 
     /* Configure pins and create Hwis per static array content */
@@ -347,26 +347,16 @@ static void GPIO_init_v0(void)
 /*
  *  ======== GPIO_read_v0 ========
  */
-static uint32_t GPIO_read_v0(uint32_t idx); /*for misra warnings*/
-static uint32_t GPIO_read_v0(uint32_t idx)
+static uint32_t GPIO_read_v0(uint32_t portNum, uint32_t pinNum); /*for misra warnings*/
+static uint32_t GPIO_read_v0(uint32_t portNum, uint32_t pinNum)
 {
     uint32_t value = 0;
-    uint32_t pinConfig;
-    uint32_t portNum;
-    uint32_t pinNum;
 
     /* Input parameter validation */
-    if (((bool)true == initCalled) &&
-        (idx < GPIO_v0_config.numberOfPinConfigs))
+    if ((portNum < GPIO_MAX_HWATTRS_V0_CNT) &&
+        (pinNum < GPIO_MAX_NUM_PINS_PER_PORT))
     {
-        pinConfig = GPIO_v0_config.pinConfigs[idx];
-        portNum   = GPIO_GET_PORT_NUM(pinConfig);
-        pinNum    = GPIO_GET_PIN_NUM(pinConfig);
-        if ((portNum < GPIO_MAX_HWATTRS_V0_CNT) &&
-            (pinNum < GPIO_MAX_NUM_PINS_PER_PORT))
-        {
-            value = GPIOPinRead_v0(GPIO_v0_hwAttrs[portNum].baseAddr, pinNum);
-        }
+        value = GPIOPinRead_v0(GPIO_v0_hwAttrs[portNum].baseAddr, pinNum);
     }
 
     return value;
@@ -427,13 +417,25 @@ static void GPIO_setConfig_v0(uint32_t idx, GPIO_PinConfig pinConfig)
     uint32_t        pinConfigVal;
     uint32_t        pinNum;
     uint32_t        portNum;
-	OsalRegisterIntrParams_t interruptRegParams;
+    OsalRegisterIntrParams_t interruptRegParams;
     MuxIntcP_inParams  muxInParams;
     MuxIntcP_outParams muxOutParams;
     GPIO_v0_HwAttrs *hwAttrs;
     GPIO_IntCfg     *intCfg;
     int32_t ret_socIntrPath=CSL_PASS;
     uint8_t ret_flag = 0U;  
+
+    /*
+     * A72 uses the board-level GIC route configured in gpio_ctrl.c.  The
+     * generic TI MuxIntc/Sciclient registration block below is intentionally
+     * disabled for this No-OS port, but keep its declarations for source
+     * compatibility with the C7X GPIO driver.
+     */
+    (void)hwiHandle;
+    (void)muxInParams;
+    (void)muxOutParams;
+    (void)intCfg;
+    (void)ret_socIntrPath;
 
     if (idx < GPIO_v0_config.numberOfPinConfigs)
     {
@@ -453,7 +455,8 @@ static void GPIO_setConfig_v0(uint32_t idx, GPIO_PinConfig pinConfig)
         gpioBase      = hwAttrs->baseAddr;
         intCfg        = hwAttrs->intCfg + pinNum;
 
-        if ((pinConfig & GPIO_CFG_IN_INT_ONLY) == 0U) {
+        if ((pinConfig & GPIO_CFG_IN_INT_ONLY) == 0U)
+        {
             /* Get GPIO configuration settings */
 
             /* Determine settings for GPIO as input or output */
@@ -470,9 +473,9 @@ static void GPIO_setConfig_v0(uint32_t idx, GPIO_PinConfig pinConfig)
             key = GPIO_osalHardwareIntDisable();
 
             /* Set output value */
-            if (gpio_Direction == GPIO_DIRECTION_OUTPUT) {
-                GPIOPinWrite_v0(gpioBase, pinNum,
-                    (((pinConfig & GPIO_CFG_OUT_HIGH) != 0U) ? 1U : 0U));
+            if (gpio_Direction == GPIO_DIRECTION_OUTPUT)
+            {
+                GPIOPinWrite_v0(gpioBase, pinNum,(((pinConfig & GPIO_CFG_OUT_HIGH) != 0U) ? 1U : 0U));
             }
 
             /* Configure the GPIO pin */
@@ -497,66 +500,70 @@ static void GPIO_setConfig_v0(uint32_t idx, GPIO_PinConfig pinConfig)
             gpioPortIntIdx = getGpioIntIndex(pinConfigVal);
             gpioPortIntBitMask = ((uint32_t)1U) << gpioPortIntIdx;
 
-            /* If Hwi has not already been created, do so */
-            if ((portHwiCreatedBitMask & gpioPortIntBitMask) == 0U) {
-                if (intCfg->intcMuxNum != INVALID_INTC_MUX_NUM)
-                {
-                    /* Setup intc mux */
-                    muxInParams.arg         = (uintptr_t)(portNum);
-                    muxInParams.muxNum      = intCfg->intcMuxNum;
-                    muxInParams.muxInEvent  = intCfg->intcMuxInEvent;
-                    muxInParams.muxOutEvent = intCfg->intcMuxOutEvent;
-                    muxInParams.muxIntcFxn  = (MuxIntcFxn)(&GPIO_v0_hwiFxn);
-                    (void)memset(&muxOutParams, 0, sizeof(MuxIntcP_outParams));
-                    (void)GPIO_osalMuxIntcSetup(&muxInParams, &muxOutParams);
-
-                    interruptRegParams.corepacConfig.isrRoutine  = muxOutParams.muxIntcFxn;
-                    interruptRegParams.corepacConfig.arg         = muxOutParams.arg;
-                }
-                else
-                {
-                    interruptRegParams.corepacConfig.isrRoutine  = (&GPIO_v0_hwiFxn);
-                    interruptRegParams.corepacConfig.arg         = (uintptr_t)(portNum);
-                }
-
-                /* Setup Hardware Interrupt Controller */
-#if !defined (__ARM_ARCH_7A__)
-                if (intCfg->eventId == INVALID_INTC_EVENT_ID)
-                {
-                    /* error constructing the Hwi for GPIO Port */
-                    ret_flag = 1U;
-                }
-#endif
-                if(ret_flag == 0U)
-                {
-                    /* Configure SOC interrupt path if any */
-                    if(hwAttrs->socConfigIntrPath!=NULL) {
-                        ret_socIntrPath = (*hwAttrs->socConfigIntrPath)(portNum,pinNum,hwAttrs,TRUE);
-                    }
-                    
-                    /* Populate the interrupt parameters */
-                    interruptRegParams.corepacConfig.priority = GPIO_v0_config.intPriority;
-                    interruptRegParams.corepacConfig.name=NULL;
-                    interruptRegParams.corepacConfig.corepacEventNum = (int32_t)intCfg->eventId; /* Event going in to CPU */
-                    interruptRegParams.corepacConfig.intVecNum = (int32_t)intCfg->intNum; /* Host Interrupt vector */
-#if defined (__aarch64__)
-                    interruptRegParams.corepacConfig.triggerSensitivity = (uint32_t)OSAL_ARM_GIC_TRIG_TYPE_EDGE; /* interrupt edge triggered */
-#endif
-#if (__ARM_ARCH == 7) && (__ARM_ARCH_PROFILE == 'R') /* R5F */
-                    interruptRegParams.corepacConfig.triggerSensitivity = (uint32_t)OSAL_ARM_GIC_TRIG_TYPE_EDGE;
-#endif
-
-                    if(ret_socIntrPath==CSL_PASS) {
-                        /* Register interrupts */
-                        (void)GPIO_osalRegisterInterrupt(&interruptRegParams,&(hwiHandle));
-                    }  
-
-                    if (hwiHandle == NULL) {
-                        /* error constructing the Hwi for GPIO Port */
-                        ret_flag = 1U;
-                    }
-                }
-            }
+//            /* If Hwi has not already been created, do so */
+//            if ((portHwiCreatedBitMask & gpioPortIntBitMask) == 0U)
+//            {
+//                if (intCfg->intcMuxNum != INVALID_INTC_MUX_NUM)
+//                {
+//                    /* Setup intc mux */
+//                    muxInParams.arg         = (uintptr_t)(portNum);
+//                    muxInParams.muxNum      = intCfg->intcMuxNum;
+//                    muxInParams.muxInEvent  = intCfg->intcMuxInEvent;
+//                    muxInParams.muxOutEvent = intCfg->intcMuxOutEvent;
+//                    muxInParams.muxIntcFxn  = (MuxIntcFxn)(&GPIO_v0_hwiFxn);
+//                    (void)memset(&muxOutParams, 0, sizeof(MuxIntcP_outParams));
+//                    (void)GPIO_osalMuxIntcSetup(&muxInParams, &muxOutParams);
+//
+//                    interruptRegParams.corepacConfig.isrRoutine  = muxOutParams.muxIntcFxn;
+//                    interruptRegParams.corepacConfig.arg         = muxOutParams.arg;
+//                }
+//                else
+//                {
+//                    interruptRegParams.corepacConfig.isrRoutine  = (&GPIO_v0_hwiFxn);
+//                    interruptRegParams.corepacConfig.arg         = (uintptr_t)(portNum);
+//                }
+//
+//                /* Setup Hardware Interrupt Controller */
+//#if !defined (__ARM_ARCH_7A__)
+//                if (intCfg->eventId == INVALID_INTC_EVENT_ID)
+//                {
+//                    /* error constructing the Hwi for GPIO Port */
+//                    ret_flag = 1U;
+//                }
+//#endif
+//                if(ret_flag == 0U)
+//                {
+//                    /* Configure SOC interrupt path if any */
+//                    if(hwAttrs->socConfigIntrPath!=NULL)
+//                    {
+//                        ret_socIntrPath = (*hwAttrs->socConfigIntrPath)(portNum,pinNum,hwAttrs,TRUE);
+//                    }
+//
+//                    /* Populate the interrupt parameters */
+//                    interruptRegParams.corepacConfig.priority = GPIO_v0_config.intPriority;
+//                    interruptRegParams.corepacConfig.name=NULL;
+//                    interruptRegParams.corepacConfig.corepacEventNum = (int32_t)intCfg->eventId; /* Event going in to CPU */
+//                    interruptRegParams.corepacConfig.intVecNum = (int32_t)intCfg->intNum; /* Host Interrupt vector */
+//#if defined (__aarch64__)
+//                    interruptRegParams.corepacConfig.triggerSensitivity = (uint32_t)OSAL_ARM_GIC_TRIG_TYPE_EDGE; /* interrupt edge triggered */
+//#endif
+//#if (__ARM_ARCH == 7) && (__ARM_ARCH_PROFILE == 'R') /* R5F */
+//                    interruptRegParams.corepacConfig.triggerSensitivity = (uint32_t)OSAL_ARM_GIC_TRIG_TYPE_EDGE;
+//#endif
+//
+//                    if(ret_socIntrPath==CSL_PASS)
+//                    {
+//                        /* Register interrupts */
+//                        (void)GPIO_osalRegisterInterrupt(&interruptRegParams,&(hwiHandle));
+//                    }
+//
+//                    if (hwiHandle == NULL)
+//                    {
+//                        /* error constructing the Hwi for GPIO Port */
+//                        ret_flag = 1U;
+//                    }
+//                }
+//            }
             
             if(ret_flag == 0U)
             {
@@ -579,28 +586,20 @@ static void GPIO_setConfig_v0(uint32_t idx, GPIO_PinConfig pinConfig)
             }
         }
     }
-    return;
 }
 
 /*
  *  ======== GPIO_toggle_v0 ========
  */
-static void GPIO_toggle_v0(uint32_t idx); /*for misra warnings*/
-static void GPIO_toggle_v0(uint32_t idx)
+static void GPIO_toggle_v0(uint32_t portNum, uint32_t pinNum); /*for misra warnings*/
+static void GPIO_toggle_v0(uint32_t portNum, uint32_t pinNum)
 {
     uintptr_t key;
     uint32_t  value;
-    uint32_t  pinConfig;
-    uint32_t  pinNum;
-    uint32_t  portNum;
 
     /* Input parameter validation */
-    if (((bool)true == initCalled) &&
-        (idx < GPIO_v0_config.numberOfPinConfigs))
+    if (initCalled)
     {
-        pinConfig = GPIO_v0_config.pinConfigs[idx];
-        portNum   = GPIO_GET_PORT_NUM(pinConfig);
-        pinNum    = GPIO_GET_PIN_NUM(pinConfig);
         if ((portNum < GPIO_MAX_HWATTRS_V0_CNT) &&
             (pinNum < GPIO_MAX_NUM_PINS_PER_PORT))
         {
@@ -611,9 +610,6 @@ static void GPIO_toggle_v0(uint32_t idx)
             value = (value == 0U) ? 1U : 0U;
             GPIOPinWrite_v0(GPIO_v0_hwAttrs[portNum].baseAddr, pinNum, value);
 
-            /* Update pinConfig with new output value */
-            GPIO_v0_config.pinConfigs[idx] ^= GPIO_CFG_OUT_HIGH;
-
             GPIO_osalHardwareIntRestore(key);
         }
     }
@@ -622,40 +618,20 @@ static void GPIO_toggle_v0(uint32_t idx)
 /*
  *  ======== GPIO_write_v0 ========
  */
-static void GPIO_write_v0(uint32_t idx, uint32_t value); /*for misra warnings*/
-static void GPIO_write_v0(uint32_t idx, uint32_t value)
+static void GPIO_write_v0(uint32_t portNum, uint32_t pinNum, uint32_t value); /*for misra warnings*/
+static void GPIO_write_v0(uint32_t portNum, uint32_t pinNum, uint32_t value)
 {
     uintptr_t key;
-    uint32_t  pinConfig;
-    uint32_t  pinNum;
-    uint32_t  portNum;
 
     /* Input parameter validation */
-    if (((bool)true == initCalled) &&
-        (idx < GPIO_v0_config.numberOfPinConfigs))
+    if ((portNum < GPIO_MAX_HWATTRS_V0_CNT) &&
+        (pinNum < GPIO_MAX_NUM_PINS_PER_PORT))
     {
-        pinConfig = GPIO_v0_config.pinConfigs[idx];
-        portNum   = GPIO_GET_PORT_NUM(pinConfig);
-        pinNum    = GPIO_GET_PIN_NUM(pinConfig);
-        if ((portNum < GPIO_MAX_HWATTRS_V0_CNT) &&
-            (pinNum < GPIO_MAX_NUM_PINS_PER_PORT))
-        {
-            key = GPIO_osalHardwareIntDisable();
-
-            /* Clear output from pinConfig */
-            GPIO_v0_config.pinConfigs[idx] &= ~GPIO_CFG_OUT_HIGH;
-
-            if (value != 0U)
-            {
-                /* Set the pinConfig output bit to high */
-                GPIO_v0_config.pinConfigs[idx] |= GPIO_CFG_OUT_HIGH;
-            }
-
-            GPIOPinWrite_v0(GPIO_v0_hwAttrs[portNum].baseAddr, pinNum, value);
-
-            GPIO_osalHardwareIntRestore(key);
-        }
+        key = GPIO_osalHardwareIntDisable();
+        GPIOPinWrite_v0(GPIO_v0_hwAttrs[portNum].baseAddr, pinNum, value);
+        GPIO_osalHardwareIntRestore(key);
     }
+    
 }
 
 /* GPIO function table for GPIO_v0 implementation */

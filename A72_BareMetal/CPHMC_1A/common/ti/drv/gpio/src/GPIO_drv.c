@@ -95,12 +95,12 @@ void GPIO_init(void)
 /*
  *  ======== GPIO_read ========
  */
-uint32_t GPIO_read(uint32_t index)
+uint32_t GPIO_read(uint32_t portNum, uint32_t pinNum)
 {
     uint32_t ret_val = 0U;
     if ((GPIO_config[0].fxnTablePtr != NULL) && (GPIO_config[0].fxnTablePtr->readFxn != NULL))
     {
-        ret_val = GPIO_config[0].fxnTablePtr->readFxn(index);
+        ret_val = GPIO_config[0].fxnTablePtr->readFxn(portNum, pinNum);
     }
     else
     {
@@ -134,21 +134,21 @@ void GPIO_setConfig(uint32_t index, GPIO_PinConfig pinConfig)
 /*
  *  ======== GPIO_toggle ========
  */
-void GPIO_toggle(uint32_t index)
+void GPIO_toggle(uint32_t portNum, uint32_t pinNum)
 {
     if ((GPIO_config[0].fxnTablePtr != NULL) && (GPIO_config[0].fxnTablePtr->toggleFxn != NULL))
     {
-        GPIO_config[0].fxnTablePtr->toggleFxn(index);
+        GPIO_config[0].fxnTablePtr->toggleFxn(portNum, pinNum);
     }
 }
 
 /*
  *  ======== GPIO_write ========
  */
-void GPIO_write(uint32_t index, uint32_t value)
+void GPIO_write(uint32_t portNum, uint32_t pinNum, uint32_t value)
 {
     if ((GPIO_config[0].fxnTablePtr != NULL) && (GPIO_config[0].fxnTablePtr->writeFxn != NULL))
     {
-        GPIO_config[0].fxnTablePtr->writeFxn(index, value);
+        GPIO_config[0].fxnTablePtr->writeFxn(portNum, pinNum, value);
     }
 }

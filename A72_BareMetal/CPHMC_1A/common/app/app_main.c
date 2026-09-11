@@ -12,10 +12,9 @@
 #include "app_main.h"
 
 #include <stdint.h>
+#include <stdio.h>
 
 #include <ti/drv/uart/UART_stdio.h>
-
-#define printf UART_printf
 
 #include "app_register.h"
 #include "handle_int_prog.h"
@@ -53,10 +52,10 @@ static void app_1s_task(uintptr_t arg)
     uint32_t ipcMessageCount;
     uint32_t ipcReplyCount;
 
-    gpio_ctrl_toggle(GPIO_CTRL_SYS_BOOTMODE0);
-    gpio_ctrl_toggle(GPIO_CTRL_SYS_BOOTMODE2);
-    gpio_ctrl_read(GPIO_CTRL_SYS_BOOTMODE0, &bootmode0Value);
-    gpio_ctrl_read(GPIO_CTRL_SYS_BOOTMODE2, &bootmode2Value);
+    GPIO_toggle(GPIO_CTRL_PORT, GPIO_CTRL_BOOTMODE0_PIN);
+    GPIO_toggle(GPIO_CTRL_PORT, GPIO_CTRL_BOOTMODE2_PIN);
+    bootmode0Value = GPIO_read(GPIO_CTRL_PORT, GPIO_CTRL_BOOTMODE0_PIN);
+    bootmode2Value = GPIO_read(GPIO_CTRL_PORT, GPIO_CTRL_BOOTMODE2_PIN);
     gpioIntrCount = gpio_intr_get_count();
     ipcMessageCount = ipc_ctrl_get_message_count();
     ipcReplyCount = ipc_ctrl_get_rx_count();
@@ -111,8 +110,8 @@ int32_t app_main_init(void)
         printf("GPIO init failed, status=%d\n", status);
         return status;
     }
-    (void)gpio_ctrl_write(GPIO_CTRL_SYS_BOOTMODE0, 0U);
-    (void)gpio_ctrl_write(GPIO_CTRL_SYS_BOOTMODE2, 0U);
+    GPIO_write(GPIO_CTRL_PORT, GPIO_CTRL_BOOTMODE0_PIN, 0U);
+    GPIO_write(GPIO_CTRL_PORT, GPIO_CTRL_BOOTMODE2_PIN, 0U);
 
     status = gpio_intr_init();
     if (status != 0)

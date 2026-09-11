@@ -23,4 +23,5 @@ void a72_main(void)
         }
     }
     app_main_run();
+
 }

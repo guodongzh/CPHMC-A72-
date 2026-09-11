@@ -3,7 +3,7 @@
  *@file       gpio_ctrl.c
  *@author     zhaoguodong
  *@date       2026.09.11
- *@brief      GPIO control implementation for the A72 No-OS image.
+ *@brief      GPIO control implementation for the A72 BareMetal.
  *@par        History
  *Date        Version   Author         Description
  *2026.09.11  1.0       zhaoguodong    Initial version
@@ -78,51 +78,3 @@ int32_t gpio_ctrl_init(void)
     return 0;
 }
 
-int32_t gpio_ctrl_write(GPIO_CTRL_Signal signal, uint32_t value)
-{
-    if (signal == GPIO_CTRL_SYS_BOOTMODE0)
-    {
-        GPIO_write(GPIO_CTRL_BOOTMODE0_INDEX, value);
-        return 0;
-    }
-    if (signal == GPIO_CTRL_SYS_BOOTMODE2)
-    {
-        GPIO_write(GPIO_CTRL_BOOTMODE2_INDEX, value);
-        return 0;
-    }
-    return -1;
-}
-
-int32_t gpio_ctrl_toggle(GPIO_CTRL_Signal signal)
-{
-    if (signal == GPIO_CTRL_SYS_BOOTMODE0)
-    {
-        GPIO_toggle(GPIO_CTRL_BOOTMODE0_INDEX);
-        return 0;
-    }
-    if (signal == GPIO_CTRL_SYS_BOOTMODE2)
-    {
-        GPIO_toggle(GPIO_CTRL_BOOTMODE2_INDEX);
-        return 0;
-    }
-    return -1;
-}
-
-int32_t gpio_ctrl_read(GPIO_CTRL_Signal signal, uint32_t *value)
-{
-    if (value == (uint32_t *)0)
-    {
-        return -1;
-    }
-    if (signal == GPIO_CTRL_SYS_BOOTMODE0)
-    {
-        *value = GPIO_read(GPIO_CTRL_BOOTMODE0_INDEX);
-        return 0;
-    }
-    if (signal == GPIO_CTRL_SYS_BOOTMODE2)
-    {
-        *value = GPIO_read(GPIO_CTRL_BOOTMODE2_INDEX);
-        return 0;
-    }
-    return -1;
-}

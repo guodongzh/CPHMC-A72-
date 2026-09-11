@@ -326,7 +326,7 @@ extern "C" {
 #define GPIO_osalHardwareIntrClear(X,Y)    (Osal_ClearInterrupt((X),(Y)))
 
 /**
- * @brief  Function to Setup Interrupt Controller Mux
+ * @brief  Function to setup_xdma_desc Interrupt Controller Mux
  *
  * <b> Prototype: </b>
  *  The following is the C prototype for the expected OSAL API.

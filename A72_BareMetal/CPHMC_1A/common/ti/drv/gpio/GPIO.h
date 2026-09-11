@@ -88,16 +88,6 @@ extern "C" {
 
 #include <stdint.h>
 
-/*!
- *  @brief  GPIO pin configuration settings
- *
- *  The upper 16 bits of the 32 bit PinConfig is reserved
- *  for pin configuration settings.
- *
- *  The lower 16 bits are reserved for device-specific
- *  port/pin identifications
- */
-typedef uint32_t GPIO_PinConfig;
 
 /*!
  *  @cond NODOC
@@ -118,6 +108,17 @@ typedef uint32_t GPIO_PinConfig;
 
 
 /*! @endcond */
+
+/*!
+ *  @brief  GPIO pin configuration settings
+ *
+ *  The upper 16 bits of the 32 bit PinConfig is reserved
+ *  for pin configuration settings.
+ *
+ *  The lower 16 bits are reserved for device-specific
+ *  port/pin identifications
+ */
+typedef uint32_t GPIO_PinConfig;
 
 /** @name GPIO_PinConfig pin direction configuration macros
  *  @{
@@ -183,12 +184,14 @@ typedef void        (*GPIO_InitFxn)           (void);
 /*!
  *  @brief      Reads the value of a GPIO pin
  */
-typedef uint32_t    (*GPIO_ReadFxn)           (uint32_t idx);
+typedef uint32_t    (*GPIO_ReadFxn)           (uint32_t portNum,
+                                               uint32_t pinNum);
 
 /*!
  *  @brief     Writes the value to a GPIO pin
  */
-typedef void        (*GPIO_WriteFxn)          (uint32_t idx,
+typedef void        (*GPIO_WriteFxn)          (uint32_t portNum,
+                                               uint32_t pinNum,
                                                uint32_t value);
 
 /*!
@@ -222,7 +225,7 @@ typedef void        (*GPIO_setConfigFxn)       (uint32_t idx,
  *
  *  @param      idx    GPIO index
  */
-typedef void        (*GPIO_toggleFxn)          (uint32_t idx);
+typedef void        (*GPIO_toggleFxn)          (uint32_t portNum, uint32_t pinNum);
 
 /*!
  *  @brief      The definition of a GPIO function table that contains the
@@ -327,7 +330,7 @@ extern void GPIO_init(void);
  *
  *  @return     0 or 1, depending on the state of the pin.
  */
-extern uint32_t GPIO_read(uint32_t idx);
+extern uint32_t GPIO_read(uint32_t portNum, uint32_t pinNum);
 
 /*!
  *  @brief      Bind a callback function to a GPIO pin interrupt
@@ -372,7 +375,7 @@ extern void GPIO_setConfig(uint32_t idx, GPIO_PinConfig pinConfig);
  *
  *  @param      idx    GPIO index
  */
-extern void GPIO_toggle(uint32_t idx);
+void GPIO_toggle(uint32_t portNum, uint32_t pinNum);
 
 /*!
  *  @brief     Writes the value to a GPIO pin
@@ -380,7 +383,7 @@ extern void GPIO_toggle(uint32_t idx);
  *  @param      idx      GPIO index
  *  @param      value    must be either 0 or 1
  */
-extern void GPIO_write(uint32_t idx, uint32_t value);
+extern void GPIO_write(uint32_t portNum, uint32_t pinNum, uint32_t value);
 
 #ifdef __cplusplus
 }

@@ -84,6 +84,14 @@ SECTIONS
         __stack_top = .;
     } > A72_DDR
 
+    /* Heap used by the A72 GCC/newlib libc malloc family. */
+    .heap (NOLOAD) : ALIGN(16)
+    {
+        __heap_start = .;
+        . += 0x00200000;
+        __heap_end = .;
+    } > A72_DDR
+
     __ddr_image_end = .;
 
     /DISCARD/ :

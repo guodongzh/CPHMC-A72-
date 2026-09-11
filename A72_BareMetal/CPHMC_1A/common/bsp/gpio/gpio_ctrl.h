@@ -30,17 +30,12 @@ extern "C" {
 #define GPIO_CTRL_PORT              (0U)
 #define GPIO_CTRL_BOOTMODE0_PIN     (6U)
 #define GPIO_CTRL_BOOTMODE2_PIN     (48U)
-#define GPIO_CTRL_BOOTMODE0_INDEX   (1U)
-#define GPIO_CTRL_BOOTMODE2_INDEX   (2U)
 #define GPIO_CTRL_SHARED_INTR_IRQ   \
                                     (CSLR_COMPUTE_CLUSTER0_GIC500SS_SPI_GPIOMUX_INTRTR0_OUTP_41)
 
 
-typedef enum GPIO_CTRL_Signal_e
-{
-    GPIO_CTRL_SYS_BOOTMODE0 = 0U, /* AD20, GPIO0_6  */
-    GPIO_CTRL_SYS_BOOTMODE2 = 1U  /* AC29, GPIO0_48 */
-} GPIO_CTRL_Signal;
+#define GPIO_CTRL_SYS_BOOTMODE0     GPIO_CTRL_BOOTMODE0_PIN /* AD20, GPIO0_6  */
+#define GPIO_CTRL_SYS_BOOTMODE2     GPIO_CTRL_BOOTMODE2_PIN /* AC29, GPIO0_48 */
 
 /* DSPC7X and A72 share GPIO0_29 through GPIOMUX_INTRTR0_OUTP_41. */
 #define GPIO_CTRL_SHARED_INTR_PIN    (29U)
@@ -49,9 +44,6 @@ typedef enum GPIO_CTRL_Signal_e
 /* Initializes GPIO0_29 as an interrupt input and both BOOTMODE GPIOs low. */
 int32_t gpio_ctrl_init(void);
 
-int32_t gpio_ctrl_write(GPIO_CTRL_Signal signal, uint32_t value);
-int32_t gpio_ctrl_toggle(GPIO_CTRL_Signal signal);
-int32_t gpio_ctrl_read(GPIO_CTRL_Signal signal, uint32_t *value);
 
 #ifdef __cplusplus
 }

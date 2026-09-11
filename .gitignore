@@ -1,15 +1,25 @@
-*.hs_fs
-*.bin
+# CCS and generated build output
+A72_BareMetal/Debug/
+A72_BareMetal/Release/
+A72_BareMetal/.settings/
+A72_NoOS/build/
+A72_NoOS/.settings/
+
+# Local images, archives, and temporary files
+A72调试镜像/
+tmp/
+A72_BareMetal.7z
+
+# Independent repositories maintained separately
+CPHMC_boot/
+CPHMC_u-boot/
+
+# Generic build products
 *.o
-*.obj
-*.tiimage
-Debug/
-Release/
-obj_lib/
-.settings/
-.idea/
-.jxbrowser.userdata/
-.metadata/
-.svn
-cmake-build-debug/
-app_version.h
+*.d
+*.elf
+*.map
+*.bin
+*.img
+*.a
+*.exe
